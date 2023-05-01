@@ -36,6 +36,8 @@ namespace HMQL_Project02_Paint
 
         bool _isDrawing = false;
         bool _selectItemMode = false;
+        bool _isFoundItem = false;
+        int _posOfSelectedItem = -1;
         Point _start;
         //
         public interface IShape : ICloneable
@@ -282,13 +284,29 @@ namespace HMQL_Project02_Paint
         List<IShape> _drawnShapes = new List<IShape>();
         List<IShape> _redoList = new List<IShape>();
         IShape _preview = null;
+        IShape _selectedBorder = null;
         string _type = "Unknown"; // 0-LINE, 1-Rectangle, 2-Ellipse
 
+        public static double Distance(Point point1, Point point2)
+        {
+            double xDiff = point2.X - point1.X;
+            double yDiff = point2.Y - point1.Y;
+            double distance = Math.Sqrt(Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2));
+            return distance;
+        }
+        public static bool IsBetween(Point start, Point end, Point point)
+        {
+            double distance = Distance(start, end);
+            double distance1 = Distance(start, point);
+            double distance2 = Distance(point, end);
+            return (distance > distance1) && (distance > distance2);
+        }
         public bool areCollinear(Point p1, Point p2, Point p3)
         {
+
             double numerator = Math.Abs((p2.Y - p1.Y) * p3.X - (p2.X - p1.X) * p3.Y + p2.X * p1.Y - p2.Y * p1.X);
             double denominator = Math.Sqrt(Math.Pow(p2.Y - p1.Y, 2) + Math.Pow(p2.Y - p1.X, 2));
-            return (numerator / denominator) < 10;
+            return ((numerator / denominator) < 10) && IsBetween(p1, p2, p3);
         }
 
         public bool isInRectangle(Point p1, Point p2, Point p3)
@@ -308,50 +326,128 @@ namespace HMQL_Project02_Paint
             }
         }
 
+        public bool isInShape()
+        {
+            _isFoundItem = false;
+            _posOfSelectedItem = -1;
+            for (int i = _drawnShapes.Count - 1; i >= 0; i--)
+            {
+                var item = _drawnShapes[i];
+                if (_isFoundItem) break;
+                switch (item)
+                {
+                    case LineEntity line:
+                        if (areCollinear(line.Start, line.End, _start))
+                        {
+                            _posOfSelectedItem = i;
+                            _isFoundItem = true;
+                            _selectedBorder = _line.Clone() as IShape;
+                            _selectedBorder.HandleStart(line.Start);
+                            _selectedBorder.HandleEnd(line.End);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPainter painter = _painterPrototypes["Line"];
+                            UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(shape);
+                        }
+                        else
+                        {
+
+                        }
+                        break;
+                    case RectangleEntity rectangle:
+                        if (isInRectangle(rectangle.TopLeft, rectangle.BottomRight, _start))
+                        {
+                            _posOfSelectedItem = i;
+                            _isFoundItem = true;
+                            _selectedBorder = _rectangle.Clone() as IShape;
+                            _selectedBorder.HandleStart(rectangle.TopLeft);
+                            _selectedBorder.HandleEnd(rectangle.BottomRight);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPainter painter = _painterPrototypes["Rectangle"];
+                            UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(shape);
+
+                        }
+                        else
+                        {
+
+                        }
+                        break;
+                    case EllipseEntity ellipse:
+                        if (isInRectangle(ellipse.TopLeft, ellipse.BottomRight, _start))
+                        {
+                            _posOfSelectedItem = i;
+                            _isFoundItem = true;
+                            _selectedBorder = _rectangle.Clone() as IShape;
+                            _selectedBorder.HandleStart(ellipse.TopLeft);
+                            _selectedBorder.HandleEnd(ellipse.BottomRight);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPainter painter = _painterPrototypes["Rectangle"];
+                            UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(shape);
+                        }
+                        else
+                        {
+
+                        }
+                        break;
+                    case TriangleEntity triangle:
+                        if (isInRectangle(triangle.TopLeft, triangle.BottomRight, _start))
+                        {
+                            _posOfSelectedItem = i;
+                            _isFoundItem = true;
+                            _selectedBorder = _rectangle.Clone() as IShape;
+                            _selectedBorder.HandleStart(triangle.TopLeft);
+                            _selectedBorder.HandleEnd(triangle.BottomRight);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPainter painter = _painterPrototypes["Rectangle"];
+                            UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(shape);
+                        }
+                        else
+                        {
+
+                        }
+                        break;
+                    default:
+                        // code for other types
+                        break;
+                }
+            }
+            if (_isFoundItem)
+            {
+                _drawnShapes.Add(_selectedBorder);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private void Border_MouseDown(object sender, MouseEventArgs e)
         {
-            if (_selectItemMode)
+            if (_selectItemMode && !_isFoundItem)
             {
                 _start = e.GetPosition(canvas);
-                foreach (var item in _drawnShapes)
+                if (isInShape())
                 {
-                    switch (item)
-                    {
-                        case LineEntity line:
-                            if (areCollinear(line.Start, line.End, _start))
-                            {
+                    _isFoundItem = true;
+                }
+            }
+            else if (_selectItemMode && _isFoundItem)
+            {
+                _start = e.GetPosition(canvas);
 
-                            }
-                            else
-                            {
-
-                            }
-                            break;
-                        case RectangleEntity rectangle:
-                            if (isInRectangle(rectangle.TopLeft, rectangle.BottomRight, _start))
-                            {
-
-
-                            }
-                            else
-                            {
-
-                            }
-                            break;
-                        case EllipseEntity ellipse:
-                            if (isInRectangle(ellipse.TopLeft, ellipse.BottomRight, _start))
-                            {
-
-                            }
-                            else
-                            {
-
-                            }
-                            break;
-                        default:
-                            // code for other types
-                            break;
-                    }
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                if (isInShape())
+                {
+                    _isFoundItem = true;
                 }
             }
             else
@@ -366,6 +462,10 @@ namespace HMQL_Project02_Paint
 
         private void Border_MouseMove(object sender, MouseEventArgs e)
         {
+            if (_selectItemMode && _isFoundItem)
+            {
+                var end = e.GetPosition(canvas);
+            }
             if (_isDrawing)
             {
                 var end = e.GetPosition(canvas);
@@ -391,7 +491,7 @@ namespace HMQL_Project02_Paint
 
         private void Border_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_type != "FillColor")
+            if (!_selectItemMode)
             {
                 _isDrawing = false;
                 var end = e.GetPosition(canvas);
@@ -454,7 +554,7 @@ namespace HMQL_Project02_Paint
             _selectItemMode = false;
         }
 
-        private void fillColorButton_Click(object sender, RoutedEventArgs e)
+        private void chooseShapeButton_Click(object sender, RoutedEventArgs e)
         {
             _selectItemMode = true;
         }
@@ -514,6 +614,11 @@ namespace HMQL_Project02_Paint
                 color = ColorPicker.Color
             };
             strokeColor = newColor;
+        }
+
+        private void deleteTest_Click(object sender, RoutedEventArgs e)
+        {
+            canvas.Children.RemoveAt(_posOfSelectedItem);
         }
     }
 }
