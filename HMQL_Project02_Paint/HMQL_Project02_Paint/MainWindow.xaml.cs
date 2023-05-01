@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Syncfusion.Windows.Shared;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,12 +35,13 @@ namespace HMQL_Project02_Paint
         bool _isDrawing = false;
         Point _start;
         //
-        interface IShape : ICloneable
+        public interface IShape : ICloneable
         {
             public string Name { get; }
+            public int StrokeThickness { get; set; }
+            public Color StrokeColor { get; set; }
             void HandleStart(Point point);
             void HandleEnd(Point point);
-
         }
 
         class LineEntity : IShape
@@ -48,6 +50,9 @@ namespace HMQL_Project02_Paint
             public Point End { get; set; }
 
             public string Name => "Line";
+
+            public int StrokeThickness { get; set; }
+            public Color StrokeColor { get; set; }
 
             public void HandleStart(Point point)
             {
@@ -70,6 +75,9 @@ namespace HMQL_Project02_Paint
             public Point BottomRight{ get; set; }
             public string Name => "Rectangle";
 
+            public int StrokeThickness { get; set; }
+            public Color StrokeColor { get; set; }
+
             public void HandleStart(Point point)
             {
                 TopLeft = point;
@@ -85,13 +93,38 @@ namespace HMQL_Project02_Paint
             }
         }
 
+        class EllipseEntity : IShape
+        {
+            public Point TopLeft { get; set; }
+            public Point BottomRight { get; set; }
+            public string Name => "Ellipse";
+
+            public int StrokeThickness { get; set; }
+            public Color StrokeColor { get; set; }
+
+            public void HandleStart(Point point)
+            {
+                TopLeft = point;
+            }
+
+            public void HandleEnd(Point point)
+            {
+                BottomRight = point;
+            }
+
+            public object Clone()
+            {
+                return MemberwiseClone();
+            }
+        }
 
         //
-        interface IPainter
+        public List<int> thicknessValues = new List<int> { 1, 3, 5, 7, 9 };
+        public int strokeThickness = 1;
+        ColorAutoChange strokeColor = new ColorAutoChange();
+        public interface IPainter
         {
             UIElement Draw(IShape shape);
-
-           
         }
 
         class LinePainter : IPainter
@@ -105,13 +138,12 @@ namespace HMQL_Project02_Paint
                     Y1 = line.Start.Y,
                     X2 = line.End.X,
                     Y2 = line.End.Y,
-                    StrokeThickness = 1,
-                    Stroke = new SolidColorBrush(Colors.Black)
+                    StrokeThickness = shape.StrokeThickness,
+                    Stroke = new SolidColorBrush(shape.StrokeColor)
                 };
                 return element;
             }
 
-           
         }
 
         class RectanglePainter : IPainter
@@ -122,49 +154,53 @@ namespace HMQL_Project02_Paint
                 double width = rectangle.BottomRight.X - rectangle.TopLeft.X;
                 double height = rectangle.BottomRight.Y - rectangle.TopLeft.Y;
                
-                //if (width >= 0 && height >= 0)
-                //{
                     var element = new Rectangle()
                     {
                         Width = width,
                         Height = height,
-                        StrokeThickness = 1,
-                        Stroke = new SolidColorBrush(Colors.Black)
+                        StrokeThickness = shape.StrokeThickness,
+                        Stroke = new SolidColorBrush(shape.StrokeColor)
                     };
                     Canvas.SetLeft(element, rectangle.TopLeft.X);
                     Canvas.SetTop(element, rectangle.TopLeft.Y);
                     return element;
-                //}
-                //Add Handling negative value as currently it can only draw from top left to bottom right
-                //else if (width <= 0 && height >= 0)
-                //{
-                //    return element;
-                //}
-                //else if (width >= 0 && height <= 0)
-                //{
-                //    return element;
-                //}
-                //else if (width <= 0 && height <= 0)
-                //{
-                //    return element;
-                //}
             }
+        }
 
-            
+        class EllipsePainter : IPainter
+        {
+            public UIElement Draw(IShape shape)
+            {
+                var ellipse = shape as EllipseEntity;
+                double width = ellipse.BottomRight.X - ellipse.TopLeft.X;
+                double height = ellipse.BottomRight.Y - ellipse.TopLeft.Y;
+
+                var element = new Ellipse()
+                {
+                    Width = width,
+                    Height = height,
+                    StrokeThickness = shape.StrokeThickness,
+                    Stroke = new SolidColorBrush(shape.StrokeColor)
+                };
+                Canvas.SetLeft(element, ellipse.TopLeft.X);
+                Canvas.SetTop(element, ellipse.TopLeft.Y);
+                return element;
+            }
         }
             
         List<IShape> _drawnShapes = new List<IShape>();
+        List<IShape> _redoList = new List<IShape>();
         IShape _preview = null;
-        string _type = "Unknown"; // 0-LINE, 1-Rectangle
+        string _type = "Unknown"; // 0-LINE, 1-Rectangle, 2-Ellipse
         private void Border_MouseDown(object sender, MouseEventArgs e)
         {
             _isDrawing = true;
             _start = e.GetPosition(canvas);
-
             _preview.HandleStart(_start);
+            _preview.StrokeThickness = strokeThickness;
+            _preview.StrokeColor = strokeColor.color;
         }
 
-      
         private void Border_MouseMove(object sender, MouseEventArgs e)
         {
             if (_isDrawing)
@@ -196,28 +232,36 @@ namespace HMQL_Project02_Paint
             var end = e.GetPosition(canvas);
             _preview.HandleEnd(end);
             _drawnShapes.Add(_preview.Clone() as IShape);
+            _redoList.Clear();
         }
+
         LineEntity _line = new LineEntity();
         RectangleEntity _rectangle = new RectangleEntity();
+        EllipseEntity _ellipse = new EllipseEntity();
         Dictionary<string, IPainter> _painterPrototypes;
         Dictionary<string, IShape> _shapePrototypes;
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
+            StrokeSizeCombobox.SelectedIndex = 0;
+            StrokeSizeCombobox.ItemsSource = thicknessValues;
+            ColorPicker.Color = Colors.Black;
             _painterPrototypes = new Dictionary<string, IPainter>
             {
                 {_line.Name, new LinePainter() },
-                {_rectangle.Name, new RectanglePainter() }
+                {_rectangle.Name, new RectanglePainter() },
+                {_ellipse.Name, new EllipsePainter() }
             };
 
             _shapePrototypes = new Dictionary<string, IShape>
             {
                 {_line.Name, new LineEntity() },
-                {_rectangle.Name, new RectangleEntity() }
+                {_rectangle.Name, new RectangleEntity() },
+                {_ellipse.Name, new EllipseEntity() }
             };
-
             _type = _line.Name;
             _preview = (IShape)_shapePrototypes[_type].Clone();
+
+            Application.Current.MainWindow.WindowState = WindowState.Maximized;
         }
 
         private void lineButton_Click(object sender, RoutedEventArgs e)
@@ -230,6 +274,63 @@ namespace HMQL_Project02_Paint
         {
             _type = _rectangle.Name;
             _preview = _rectangle.Clone() as IShape;
+        }
+
+        private void ellipseButton_Click(Object sender, RoutedEventArgs e)
+        {
+            _type = _ellipse.Name;
+            _preview = _ellipse.Clone() as IShape;
+        }
+
+        private void undoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(_drawnShapes.Count <= 0) return;
+            IShape element = _drawnShapes[_drawnShapes.Count - 1];
+            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+            _redoList.Add(element);
+            //Xóa đi tất cả bản vẽ củ
+            canvas.Children.Clear();
+
+            //Vẽ lại các điểm đã lưu (convert nó thành list chứa UI element và loại
+            foreach (var item in _drawnShapes)
+            {
+                IPainter painter = _painterPrototypes[item.Name];
+                UIElement shape = painter.Draw(item); // vẽ ra tương ứng với loại entity
+                canvas.Children.Add(shape);
+            }
+        }
+
+        private void redoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_redoList.Count <= 0) return;
+            IShape element = _redoList[_redoList.Count - 1];
+            _redoList.RemoveAt(_redoList.Count - 1);
+            _drawnShapes.Add(element);
+            //Xóa đi tất cả bản vẽ củ
+            canvas.Children.Clear();
+
+            //Vẽ lại các điểm đã lưu (convert nó thành list chứa UI element và loại
+            foreach (var item in _drawnShapes)
+            {
+                IPainter painter = _painterPrototypes[item.Name];
+                UIElement shape = painter.Draw(item); // vẽ ra tương ứng với loại entity
+                canvas.Children.Add(shape);
+            }
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedSize = StrokeSizeCombobox.SelectedIndex;
+            strokeThickness = thicknessValues[selectedSize];
+        }
+
+        private void ColorPicker_SelectedBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ColorAutoChange newColor = new ColorAutoChange
+            {
+                color = ColorPicker.Color
+            };
+            strokeColor = newColor;
         }
     }
 }

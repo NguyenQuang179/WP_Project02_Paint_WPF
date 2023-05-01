@@ -4,6 +4,5 @@
              xmlns:local="clr-namespace:HMQL_Project02_Paint"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
     </Application.Resources>
 </Application>

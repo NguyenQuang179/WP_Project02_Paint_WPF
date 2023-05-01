@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HMQL_Project02_Paint"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
         mc:Ignorable="d" Loaded="Window_Loaded"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
@@ -12,18 +13,42 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Name="abilitiesStackPanel">
-            <Button Click="lineButton_Click" Content="Line">
-
+            <Button Click="lineButton_Click" 
+                    Width="56"
+                    Margin="0 0 16 0"
+                    Content="Line">
             </Button>
-            <Button Click="rectangleButton_Click" Content="Rectangle">
+            <Button Click="rectangleButton_Click" 
+                    Width="56"
+                    Margin="0 0 16 0"
+                    Content="Rectangle">
             </Button>
+            <Button Click="ellipseButton_Click" 
+                    Width="56"
+                    Margin="0 0 16 0"
+                    Content="Ellipse">
+            </Button>
+            <Button Click="undoButton_Click" 
+                    Width="56"
+                    Margin="0 0 16 0"
+                    Content="Undo">
+            </Button>
+            <Button Click="redoButton_Click" 
+                    Width="56"
+                    Margin="0 0 16 0"
+                    Content="Redo">
+            </Button>
+            <ComboBox Width="56" SelectionChanged="ComboBox_SelectionChanged"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      Margin="0 0 16 0"
+                      Name="StrokeSizeCombobox">
+            </ComboBox>
+            <syncfusion:ColorPicker Name="ColorPicker" SelectedBrushChanged="ColorPicker_SelectedBrushChanged"/>
         </StackPanel>
 
         <Canvas Grid.Row="1" x:Name="canvas" Background="White"></Canvas>
         <Border Grid.Row="1" Background="Transparent" MouseDown="Border_MouseDown" MouseMove="Border_MouseMove" MouseUp="Border_MouseUp"></Border>
-        <!--</StackPanel>-->
-        
 
-       
     </Grid>
 </Window>
