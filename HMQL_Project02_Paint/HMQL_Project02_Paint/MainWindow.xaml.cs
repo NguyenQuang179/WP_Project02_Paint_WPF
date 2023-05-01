@@ -87,11 +87,61 @@ namespace HMQL_Project02_Paint
             {
                 BottomRight = point;
             }
+
             public object Clone()
             {
                 return MemberwiseClone();
             }
         }
+
+        class TriangleEntity : IShape
+        {
+            public Point TopLeft { get; set; }
+            public Point BottomRight { get; set; }
+
+            public string Name => "Triangle";
+
+            public int StrokeThickness { get; set; }
+            public Color StrokeColor { get; set; }
+
+            public void HandleStart(Point point)
+            {
+                TopLeft = point;
+            }
+
+            public void HandleEnd(Point point)
+            {
+                BottomRight = point;
+            }
+
+            public object Clone()
+            {
+                return MemberwiseClone();
+            }
+
+            public Point[] GetVertices()
+            {
+                Point[] vertices = new Point[3];
+                double width = BottomRight.X - TopLeft.X;
+                double height = BottomRight.Y - TopLeft.Y;
+
+                // Define the base of the isosceles triangle
+                double baseWidth = 0.8 * width;
+                Point baseCenter = new Point(TopLeft.X + width / 2, TopLeft.Y + height);
+
+                // Define the two points at the top of the isosceles triangle
+                double sideLength = Math.Sqrt(Math.Pow(baseWidth / 2, 2) + Math.Pow(height, 2));
+                Point leftVertex = new Point(baseCenter.X - baseWidth / 2, baseCenter.Y - sideLength);
+                Point rightVertex = new Point(baseCenter.X + baseWidth / 2, baseCenter.Y - sideLength);
+
+                vertices[0] = leftVertex;
+                vertices[1] = rightVertex;
+                vertices[2] = baseCenter;
+
+                return vertices;
+            }
+        }
+
 
         class EllipseEntity : IShape
         {
@@ -151,19 +201,21 @@ namespace HMQL_Project02_Paint
             public UIElement Draw(IShape shape)
             {
                 var rectangle = shape as RectangleEntity;
-                double width = rectangle.BottomRight.X - rectangle.TopLeft.X;
-                double height = rectangle.BottomRight.Y - rectangle.TopLeft.Y;
-               
-                    var element = new Rectangle()
-                    {
-                        Width = width,
-                        Height = height,
-                        StrokeThickness = shape.StrokeThickness,
-                        Stroke = new SolidColorBrush(shape.StrokeColor)
-                    };
-                    Canvas.SetLeft(element, rectangle.TopLeft.X);
-                    Canvas.SetTop(element, rectangle.TopLeft.Y);
-                    return element;
+                double x = Math.Min(rectangle.TopLeft.X, rectangle.BottomRight.X);
+                double y = Math.Min(rectangle.TopLeft.Y, rectangle.BottomRight.Y);
+                double width = Math.Abs(rectangle.TopLeft.X - rectangle.BottomRight.X);
+                double height = Math.Abs(rectangle.TopLeft.Y - rectangle.BottomRight.Y);
+
+                var element = new Rectangle()
+                {
+                    Width = width,
+                    Height = height,
+                    StrokeThickness = shape.StrokeThickness,
+                    Stroke = new SolidColorBrush(shape.StrokeColor)
+                };
+                Canvas.SetLeft(element, x);
+                Canvas.SetTop(element, y);
+                return element;
             }
         }
 
@@ -172,8 +224,10 @@ namespace HMQL_Project02_Paint
             public UIElement Draw(IShape shape)
             {
                 var ellipse = shape as EllipseEntity;
-                double width = ellipse.BottomRight.X - ellipse.TopLeft.X;
-                double height = ellipse.BottomRight.Y - ellipse.TopLeft.Y;
+                double x = Math.Min(ellipse.TopLeft.X, ellipse.BottomRight.X);
+                double y = Math.Min(ellipse.TopLeft.Y, ellipse.BottomRight.Y);
+                double width = Math.Abs(ellipse.TopLeft.X - ellipse.BottomRight.X);
+                double height = Math.Abs(ellipse.TopLeft.Y - ellipse.BottomRight.Y);
 
                 var element = new Ellipse()
                 {
@@ -182,12 +236,47 @@ namespace HMQL_Project02_Paint
                     StrokeThickness = shape.StrokeThickness,
                     Stroke = new SolidColorBrush(shape.StrokeColor)
                 };
-                Canvas.SetLeft(element, ellipse.TopLeft.X);
-                Canvas.SetTop(element, ellipse.TopLeft.Y);
+                Canvas.SetLeft(element, x);
+                Canvas.SetTop(element, y);
                 return element;
             }
         }
-            
+
+        class TrianglePainter : IPainter
+        {
+            public UIElement Draw(IShape shape)
+            {
+                var triangle = shape as TriangleEntity;
+                Point topLeft = triangle.TopLeft;
+                Point bottomRight = triangle.BottomRight;
+
+                double minX = Math.Min(triangle.TopLeft.X, triangle.BottomRight.X);
+                double minY = Math.Min(triangle.TopLeft.Y, triangle.BottomRight.Y);
+                double maxX = Math.Max(triangle.TopLeft.X, triangle.BottomRight.X);
+                double maxY = Math.Max(triangle.TopLeft.Y, triangle.BottomRight.Y);
+                double width = Math.Abs(triangle.TopLeft.X - triangle.BottomRight.X);
+                double height = Math.Abs(triangle.TopLeft.Y - triangle.BottomRight.Y);
+
+                Point topPoint = new Point(minX + (width / 2), minY);
+                Point bottomLeftPoint = new Point(minX, maxY);
+                Point bottomRightPoint = new Point(maxX, maxY);
+
+                var element = new Polygon()
+                {
+                    Points = new PointCollection()
+            {
+                topPoint,
+                bottomLeftPoint,
+                bottomRightPoint
+            },
+                    StrokeThickness = shape.StrokeThickness,
+                    Stroke = new SolidColorBrush(shape.StrokeColor)
+                };
+                return element;
+            }
+        }
+
+
         List<IShape> _drawnShapes = new List<IShape>();
         List<IShape> _redoList = new List<IShape>();
         IShape _preview = null;
@@ -238,6 +327,7 @@ namespace HMQL_Project02_Paint
         LineEntity _line = new LineEntity();
         RectangleEntity _rectangle = new RectangleEntity();
         EllipseEntity _ellipse = new EllipseEntity();
+        TriangleEntity _triangle = new TriangleEntity();
         Dictionary<string, IPainter> _painterPrototypes;
         Dictionary<string, IShape> _shapePrototypes;
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -249,14 +339,16 @@ namespace HMQL_Project02_Paint
             {
                 {_line.Name, new LinePainter() },
                 {_rectangle.Name, new RectanglePainter() },
-                {_ellipse.Name, new EllipsePainter() }
+                {_ellipse.Name, new EllipsePainter() },
+                 {_triangle.Name, new TrianglePainter() }
             };
 
             _shapePrototypes = new Dictionary<string, IShape>
             {
                 {_line.Name, new LineEntity() },
                 {_rectangle.Name, new RectangleEntity() },
-                {_ellipse.Name, new EllipseEntity() }
+                {_ellipse.Name, new EllipseEntity() },
+                {_triangle.Name, new TriangleEntity() }
             };
             _type = _line.Name;
             _preview = (IShape)_shapePrototypes[_type].Clone();
@@ -280,6 +372,12 @@ namespace HMQL_Project02_Paint
         {
             _type = _ellipse.Name;
             _preview = _ellipse.Clone() as IShape;
+        }
+
+        private void triangleButton_Click(Object sender, RoutedEventArgs e)
+        {
+            _type = _triangle.Name;
+            _preview = _triangle.Clone() as IShape;
         }
 
         private void undoButton_Click(object sender, RoutedEventArgs e)
