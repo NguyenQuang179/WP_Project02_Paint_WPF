@@ -12,7 +12,18 @@
             <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Name="abilitiesStackPanel">
+        <StackPanel Orientation="Horizontal" Name="abilitiesStackPanel"
+                    Background="Red">
+            <Button Click="undoButton_Click" 
+                    Width="56"
+                    Margin="0 0 16 0"
+                    Content="Undo">
+            </Button>
+            <Button Click="redoButton_Click" 
+                    Width="56"
+                    Margin="0 0 16 0"
+                    Content="Redo">
+            </Button>
             <Button Click="lineButton_Click" 
                     Width="56"
                     Margin="0 0 16 0"
@@ -37,16 +48,6 @@
                     Width="56"
                     Margin="0 0 16 0"
                     Content="Choose">
-            </Button>
-            <Button Click="undoButton_Click" 
-                    Width="56"
-                    Margin="0 0 16 0"
-                    Content="Undo">
-            </Button>
-            <Button Click="redoButton_Click" 
-                    Width="56"
-                    Margin="0 0 16 0"
-                    Content="Redo">
             </Button>
             <Button Click="deleteTest_Click" 
                     Width="56"
@@ -75,6 +76,8 @@
                       Margin="0 0 16 0"
                       Name="StrokePatternCombobox">
             </ComboBox>
+            <Button Content="Save As" Click="SaveAsButtonClick"/>
+            <Button Content="Load Image" Click="LoadImageButtonClick"/>
             <syncfusion:ColorPicker Name="ColorPicker" SelectedBrushChanged="ColorPicker_SelectedBrushChanged"/>
             <TextBlock Text="{Binding TestX}" Width="100"></TextBlock>
             <TextBlock Text="{Binding TestY}" Width="100"></TextBlock>

@@ -1,4 +1,5 @@
-﻿using Syncfusion.Windows.Shared;
+﻿using Microsoft.Win32;
+using Syncfusion.Windows.Shared;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ using System.Windows.Media.Converters;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Drawing.Imaging;
 using System.Xml.Linq;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using System.Xml.Serialization;
@@ -26,6 +28,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Net;
 using System.Xml;
 using static HMQL_Project02_Paint.MainWindow;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace HMQL_Project02_Paint
 {
@@ -816,6 +819,73 @@ namespace HMQL_Project02_Paint
                 canvas.Children.Add(shape);
             }
 
+        private void SaveAsButtonClick(object sender, RoutedEventArgs e)
+        {
+            RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas.RenderSize.Width,
+                                        (int)canvas.RenderSize.Height, 96d, 96d, System.Windows.Media.PixelFormats.Default);
+            rtb.Render(canvas);
+            var crop = new CroppedBitmap(rtb, new Int32Rect(0, 40, rtb.PixelWidth, rtb.PixelHeight - 40));
+            BitmapEncoder pngEncoder = new PngBitmapEncoder();
+            BitmapEncoder jpegEncoder = new JpegBitmapEncoder();
+            BitmapEncoder bmpEncoder = new BmpBitmapEncoder();
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "PNG Image|*.png|JPEG Image|*.jpeg|Bitmap Image|*.bmp";
+            saveFileDialog.Title = "Save an Image File";
+            saveFileDialog.ShowDialog();
+
+            if (saveFileDialog.FileName != "")
+            {
+
+                using System.IO.FileStream fs = (System.IO.FileStream)saveFileDialog.OpenFile();
+
+                switch (saveFileDialog.FilterIndex)
+                {
+                    case 1:
+                        pngEncoder.Frames.Add(BitmapFrame.Create(crop));
+                        pngEncoder.Save(fs);
+                        break;
+
+                    case 2:
+                        jpegEncoder.Frames.Add(BitmapFrame.Create(crop));
+                        jpegEncoder.Save(fs);
+                        break;
+
+                    case 3:
+                        bmpEncoder.Frames.Add(BitmapFrame.Create(crop));
+                        bmpEncoder.Save(fs);
+                        break;
+                }
+
+                fs.Close();
+            }
+        }
+
+        private void LoadImageButtonClick(object sender, RoutedEventArgs e)
+        {
+            // open file dialog   
+            OpenFileDialog open = new OpenFileDialog();  
+            // image filters  
+            open.Filter = "Image Files(*.jpeg; *.png; *.bmp)|*.jpeg; *.png; *.bmp";
+            open.ShowDialog();
+            if(open.FileName != "") {
+                System.IO.FileStream fs = (System.IO.FileStream)open.OpenFile();
+                string filename = open.FileName;
+                ImageDrawing newImage = new ImageDrawing();
+                newImage.Rect = new Rect(0, 0, canvas.RenderSize.Width, canvas.RenderSize.Height - 40);
+                newImage.ImageSource = new BitmapImage(new Uri(filename));
+
+                var width = newImage.Bounds.Width;
+                var height = newImage.Bounds.Height;
+
+                var previewImageUI = new Image { Source = new DrawingImage(newImage) };
+                var newImageUI = new Image { Source = new DrawingImage(newImage) };
+                previewImageUI.Arrange(new Rect(0, 0, width, height));
+                newImageUI.Arrange(new Rect(0, 0, width, height));
+
+                canvas.Children.Add(previewImageUI);
+                canvas.Children.Add(newImageUI);
+                fs.Close();
+            }
         }
     }
 }
