@@ -38,6 +38,7 @@ namespace HMQL_Project02_Paint
         bool _isDrawing = false;
         bool _selectItemMode = false;
         bool _isFoundItem = false;
+        bool _canBeMoved = false;
         int _posOfSelectedItem = -1;
         Point _start;
 
@@ -48,7 +49,7 @@ namespace HMQL_Project02_Paint
             public string Name { get; }
             public int StrokeThickness { get; set; }
             public Color StrokeColor { get; set; }
-            public DoubleCollection StrokePattern {get; set;}
+            public DoubleCollection StrokePattern { get; set; }
             void HandleStart(Point point);
             void HandleEnd(Point point);
         }
@@ -191,7 +192,7 @@ namespace HMQL_Project02_Paint
             new DoubleCollection { 1, 5, 5, 5 },
             new DoubleCollection { 5, 3, 1, 3, 1, 3}
         };
-        public DoubleCollection strokePattern = new DoubleCollection { 1, 0 };  
+        public DoubleCollection strokePattern = new DoubleCollection { 1, 0 };
         public int strokeThickness = 1;
         ColorAutoChange strokeColor = new ColorAutoChange();
         public interface IPainter
@@ -368,6 +369,7 @@ namespace HMQL_Project02_Paint
                             _selectedBorder.HandleEnd(line.End);
                             _selectedBorder.StrokeThickness = 2;
                             _selectedBorder.StrokeColor = Colors.Red;
+                            _selectedBorder.StrokePattern = new DoubleCollection() { 3, 3 };
                             IPainter painter = _painterPrototypes["Line"];
                             UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
                             canvas.Children.Add(shape);
@@ -387,6 +389,7 @@ namespace HMQL_Project02_Paint
                             _selectedBorder.HandleEnd(rectangle.BottomRight);
                             _selectedBorder.StrokeThickness = 2;
                             _selectedBorder.StrokeColor = Colors.Red;
+                            _selectedBorder.StrokePattern = new DoubleCollection() { 3, 3 };
                             IPainter painter = _painterPrototypes["Rectangle"];
                             UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
                             canvas.Children.Add(shape);
@@ -407,6 +410,7 @@ namespace HMQL_Project02_Paint
                             _selectedBorder.HandleEnd(ellipse.BottomRight);
                             _selectedBorder.StrokeThickness = 2;
                             _selectedBorder.StrokeColor = Colors.Red;
+                            _selectedBorder.StrokePattern = new DoubleCollection() { 3, 3 };
                             IPainter painter = _painterPrototypes["Rectangle"];
                             UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
                             canvas.Children.Add(shape);
@@ -426,6 +430,7 @@ namespace HMQL_Project02_Paint
                             _selectedBorder.HandleEnd(triangle.BottomRight);
                             _selectedBorder.StrokeThickness = 2;
                             _selectedBorder.StrokeColor = Colors.Red;
+                            _selectedBorder.StrokePattern = new DoubleCollection() { 3, 3 };
                             IPainter painter = _painterPrototypes["Rectangle"];
                             UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
                             canvas.Children.Add(shape);
@@ -455,21 +460,29 @@ namespace HMQL_Project02_Paint
         {
             if (_selectItemMode && !_isFoundItem)
             {
+                _canBeMoved = false;
                 _start = e.GetPosition(canvas);
                 if (isInShape())
                 {
                     _isFoundItem = true;
+                    _redoList.Clear();
                 }
             }
             else if (_selectItemMode && _isFoundItem)
             {
-                _start = e.GetPosition(canvas);
 
+                _start = e.GetPosition(canvas);
+                int temp = _posOfSelectedItem;
                 _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
                 canvas.Children.RemoveAt(canvas.Children.Count - 1);
                 if (isInShape())
                 {
                     _isFoundItem = true;
+                }
+                if (temp != _posOfSelectedItem)
+                {
+                    _canBeMoved = false;
+                    _redoList.Clear();
                 }
             }
             else
@@ -499,7 +512,7 @@ namespace HMQL_Project02_Paint
 
         private void Border_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_selectItemMode && _isFoundItem)
+            if (_selectItemMode && _isFoundItem && _canBeMoved)
             {
                 var end = e.GetPosition(canvas);
                 var item = _drawnShapes[_posOfSelectedItem];
@@ -507,8 +520,10 @@ namespace HMQL_Project02_Paint
                 {
                     case LineEntity line:
                         {
+                            _redoList.Add(_drawnShapes[_posOfSelectedItem]);
                             _drawnShapes.RemoveAt(_posOfSelectedItem);
                             canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _redoList.Add(_drawnShapes[_drawnShapes.Count - 1]);
                             _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
                             canvas.Children.RemoveAt(canvas.Children.Count - 1);
                             Point newStart = new Point(line.Start.X - _start.X + end.X, line.Start.Y - _start.Y + end.Y);
@@ -530,6 +545,7 @@ namespace HMQL_Project02_Paint
                             _selectedBorder.HandleEnd(newEnd);
                             _selectedBorder.StrokeThickness = 2;
                             _selectedBorder.StrokeColor = Colors.Red;
+                            _selectedBorder.StrokePattern = new DoubleCollection() { 3, 3 };
                             UIElement selectedShape = painterLine.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
                             canvas.Children.Add(selectedShape);
                             _drawnShapes.Add(_selectedBorder);
@@ -538,8 +554,10 @@ namespace HMQL_Project02_Paint
                         }
                     case RectangleEntity rectangle:
                         {
+                            _redoList.Add(_drawnShapes[_posOfSelectedItem]);
                             _drawnShapes.RemoveAt(_posOfSelectedItem);
                             canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _redoList.Add(_drawnShapes[_drawnShapes.Count - 1]);
                             _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
                             canvas.Children.RemoveAt(canvas.Children.Count - 1);
                             Point newStart = new Point(rectangle.TopLeft.X - _start.X + end.X, rectangle.TopLeft.Y - _start.Y + end.Y);
@@ -561,6 +579,7 @@ namespace HMQL_Project02_Paint
                             _selectedBorder.HandleEnd(newEnd);
                             _selectedBorder.StrokeThickness = 2;
                             _selectedBorder.StrokeColor = Colors.Red;
+                            _selectedBorder.StrokePattern = new DoubleCollection() { 3, 3 };
                             UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
                             canvas.Children.Add(selectedShape);
                             _drawnShapes.Add(_selectedBorder);
@@ -569,8 +588,10 @@ namespace HMQL_Project02_Paint
                         }
                     case EllipseEntity ellipse:
                         {
+                            _redoList.Add(_drawnShapes[_posOfSelectedItem]);
                             _drawnShapes.RemoveAt(_posOfSelectedItem);
                             canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _redoList.Add(_drawnShapes[_drawnShapes.Count - 1]);
                             _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
                             canvas.Children.RemoveAt(canvas.Children.Count - 1);
                             Point newStart = new Point(ellipse.TopLeft.X - _start.X + end.X, ellipse.TopLeft.Y - _start.Y + end.Y);
@@ -592,6 +613,7 @@ namespace HMQL_Project02_Paint
                             _selectedBorder.HandleEnd(newEnd);
                             _selectedBorder.StrokeThickness = 2;
                             _selectedBorder.StrokeColor = Colors.Red;
+                            _selectedBorder.StrokePattern = new DoubleCollection() { 3, 3 };
                             IPainter painterRectangle = _painterPrototypes["Rectangle"];
                             UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
                             canvas.Children.Add(selectedShape);
@@ -601,8 +623,10 @@ namespace HMQL_Project02_Paint
                         }
                     case TriangleEntity triangle:
                         {
+                            _redoList.Add(_drawnShapes[_posOfSelectedItem]);
                             _drawnShapes.RemoveAt(_posOfSelectedItem);
                             canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _redoList.Add(_drawnShapes[_drawnShapes.Count - 1]);
                             _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
                             canvas.Children.RemoveAt(canvas.Children.Count - 1);
                             Point newStart = new Point(triangle.TopLeft.X - _start.X + end.X, triangle.TopLeft.Y - _start.Y + end.Y);
@@ -624,6 +648,7 @@ namespace HMQL_Project02_Paint
                             _selectedBorder.HandleEnd(newEnd);
                             _selectedBorder.StrokeThickness = 2;
                             _selectedBorder.StrokeColor = Colors.Red;
+                            _selectedBorder.StrokePattern = new DoubleCollection() { 3, 3 };
                             IPainter painterRectangle = _painterPrototypes["Rectangle"];
                             UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
                             canvas.Children.Add(selectedShape);
@@ -635,6 +660,10 @@ namespace HMQL_Project02_Paint
                         // code for other types
                         break;
                 }
+            }
+            if (_selectItemMode && _isFoundItem)
+            {
+                _canBeMoved = true;
             }
             if (!_selectItemMode)
             {
@@ -687,6 +716,13 @@ namespace HMQL_Project02_Paint
 
         private void lineButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_selectItemMode)
+            {
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                //canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                _posOfSelectedItem = -1;
+                _isFoundItem = false;
+            }
             _type = _line.Name;
             _preview = _line.Clone() as IShape;
             _selectItemMode = false;
@@ -694,13 +730,28 @@ namespace HMQL_Project02_Paint
 
         private void rectangleButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_selectItemMode)
+            {
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                //canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                _posOfSelectedItem = -1;
+                _isFoundItem = false;
+            }
             _type = _rectangle.Name;
             _preview = _rectangle.Clone() as IShape;
             _selectItemMode = false;
+
         }
 
         private void ellipseButton_Click(Object sender, RoutedEventArgs e)
         {
+            if (_selectItemMode)
+            {
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                //canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                _posOfSelectedItem = -1;
+                _isFoundItem = false;
+            }
             _type = _ellipse.Name;
             _preview = _ellipse.Clone() as IShape;
             _selectItemMode = false;
@@ -708,11 +759,19 @@ namespace HMQL_Project02_Paint
 
         private void chooseShapeButton_Click(object sender, RoutedEventArgs e)
         {
+            canvas.Children.RemoveAt(canvas.Children.Count - 1);
             _selectItemMode = true;
         }
 
         private void triangleButton_Click(Object sender, RoutedEventArgs e)
         {
+            if (_selectItemMode)
+            {
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                //canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                _posOfSelectedItem = -1;
+                _isFoundItem = false;
+            }
             _type = _triangle.Name;
             _preview = _triangle.Clone() as IShape;
         }
@@ -720,9 +779,29 @@ namespace HMQL_Project02_Paint
         private void undoButton_Click(object sender, RoutedEventArgs e)
         {
             if (_drawnShapes.Count <= 0) return;
-            IShape element = _drawnShapes[_drawnShapes.Count - 1];
-            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
-            _redoList.Add(element);
+            if (_selectItemMode)
+            {
+                if (_redoList.Count <= 0) return;
+                //IShape elementOfDraw1 = _drawnShapes[_drawnShapes.Count - 2];
+                //IShape elementOfDraw2 = _drawnShapes[_drawnShapes.Count - 1];
+
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+
+                IShape element1 = _redoList[_redoList.Count - 2];
+                _redoList.RemoveAt(_redoList.Count - 2);
+                _drawnShapes.Add(element1);
+
+                IShape element2 = _redoList[_redoList.Count - 1];
+                _redoList.RemoveAt(_redoList.Count - 1);
+                _drawnShapes.Add(element2);
+            }
+            else
+            {
+                IShape element = _drawnShapes[_drawnShapes.Count - 1];
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                _redoList.Add(element);
+            }
             //Xóa đi tất cả bản vẽ củ
             canvas.Children.Clear();
 
@@ -738,6 +817,10 @@ namespace HMQL_Project02_Paint
         private void redoButton_Click(object sender, RoutedEventArgs e)
         {
             if (_redoList.Count <= 0) return;
+            if (_selectItemMode)
+            {
+                return;
+            }
             IShape element = _redoList[_redoList.Count - 1];
             _redoList.RemoveAt(_redoList.Count - 1);
             _drawnShapes.Add(element);
