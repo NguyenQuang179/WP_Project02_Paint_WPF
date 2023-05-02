@@ -59,6 +59,12 @@
                       Margin="0 0 16 0"
                       Name="StrokeSizeCombobox">
             </ComboBox>
+            <ComboBox Width="56" SelectionChanged="StrokePatternSelectionChanged"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center"
+                      Margin="0 0 16 0"
+                      Name="StrokePatternCombobox">
+            </ComboBox>
             <syncfusion:ColorPicker Name="ColorPicker" SelectedBrushChanged="ColorPicker_SelectedBrushChanged"/>
             <TextBlock Text="{Binding TestX}" Width="100"></TextBlock>
             <TextBlock Text="{Binding TestY}" Width="100"></TextBlock>
