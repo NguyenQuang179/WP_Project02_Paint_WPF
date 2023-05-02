@@ -13,7 +13,7 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Name="abilitiesStackPanel"
-                    Background="Red">
+                    Background="Transparent">
             <Button Click="undoButton_Click" 
                     Width="56"
                     Margin="0 0 16 0"

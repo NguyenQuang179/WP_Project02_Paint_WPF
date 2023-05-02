@@ -512,7 +512,6 @@ namespace HMQL_Project02_Paint
                 canvas.Children.Add(previewElement);
                 if (canvas.Children.Count > 1) canvas.Children.RemoveAt(canvas.Children.Count - 2);
             }
-
         }
 
         private void Border_MouseUp(object sender, MouseEventArgs e)
@@ -800,24 +799,46 @@ namespace HMQL_Project02_Paint
 
         private void save_Click(object sender, RoutedEventArgs e)
         {
-            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shapes.xml");
-            SerializeInterface.SerializeShapes(_drawnShapes, filePath);
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "XML File|*.xml";
+            saveFileDialog.Title = "Save File";
+            saveFileDialog.ShowDialog();
+            //string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shapes.xml");
+            if (saveFileDialog.FileName != "")
+            {
+                SerializeInterface.SerializeShapes(_drawnShapes, saveFileDialog.FileName);
+            }
         }
 
         private void load_Click(object sender, RoutedEventArgs e)
         {
-            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shapes.xml");
-            _drawnShapes = SerializeInterface.DeserializeShapes(filePath);
-            //Xóa đi tất cả bản vẽ củ
-            canvas.Children.Clear();
-
-            //Vẽ lại các điểm đã lưu (convert nó thành list chứa UI element và loại
-            foreach (var item in _drawnShapes)
+            // open file dialog   
+            OpenFileDialog open = new OpenFileDialog();
+            // image filters  
+            open.Filter = "XML File|*.xml";
+            open.ShowDialog();
+            if (open.FileName != "")
             {
-                IPainter painter = _painterPrototypes[item.Name];
-                UIElement shape = painter.Draw(item); // vẽ ra tương ứng với loại entity
-                canvas.Children.Add(shape);
+                //string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shapes.xml");
+                _drawnShapes = SerializeInterface.DeserializeShapes(open.FileName);
+                //Xóa đi tất cả bản vẽ cũ
+                canvas.Children.Clear();
+
+                UIElement previewPic = new UIElement();
+                //Vẽ lại các điểm đã lưu (convert nó thành list chứa UI element và loại
+                foreach (var item in _drawnShapes)
+                {
+                    IPainter painter = _painterPrototypes[item.Name];
+                    UIElement shape = painter.Draw(item); // vẽ ra tương ứng với loại entity
+                    canvas.Children.Add(shape);
+                    if (item.Equals(_drawnShapes.Last()))
+                    {
+                        previewPic = painter.Draw(item);
+                        canvas.Children.Add(previewPic);
+                    }
+                }
             }
+        }
 
         private void SaveAsButtonClick(object sender, RoutedEventArgs e)
         {
@@ -863,11 +884,12 @@ namespace HMQL_Project02_Paint
         private void LoadImageButtonClick(object sender, RoutedEventArgs e)
         {
             // open file dialog   
-            OpenFileDialog open = new OpenFileDialog();  
+            OpenFileDialog open = new OpenFileDialog();
             // image filters  
             open.Filter = "Image Files(*.jpeg; *.png; *.bmp)|*.jpeg; *.png; *.bmp";
             open.ShowDialog();
-            if(open.FileName != "") {
+            if (open.FileName != "")
+            {
                 System.IO.FileStream fs = (System.IO.FileStream)open.OpenFile();
                 string filename = open.FileName;
                 ImageDrawing newImage = new ImageDrawing();

@@ -1,22 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.IO;
 using static HMQL_Project02_Paint.MainWindow;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Reflection;
-using System.Xml.Linq;
-using System.Windows.Shapes;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace HMQL_Project02_Paint
 {
-
     static class SerializeInterface
     {
         public static void SerializeShapes(List<IShape> drawnShapes, string filePath)
@@ -63,6 +54,7 @@ namespace HMQL_Project02_Paint
 
         public void ReadXml(XmlReader reader)
         {
+            if (reader.IsEmptyElement) return;
             reader.ReadStartElement("ListOfIShape");
             while (reader.IsStartElement("IShape"))
             {
