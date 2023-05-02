@@ -39,7 +39,9 @@ namespace HMQL_Project02_Paint
         bool _isFoundItem = false;
         int _posOfSelectedItem = -1;
         Point _start;
-        //
+
+        public Double TestX = 0;
+        public Double TestY = 0;
         public interface IShape : ICloneable
         {
             public string Name { get; }
@@ -462,10 +464,6 @@ namespace HMQL_Project02_Paint
 
         private void Border_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_selectItemMode && _isFoundItem)
-            {
-                var end = e.GetPosition(canvas);
-            }
             if (_isDrawing)
             {
                 var end = e.GetPosition(canvas);
@@ -491,6 +489,143 @@ namespace HMQL_Project02_Paint
 
         private void Border_MouseUp(object sender, MouseEventArgs e)
         {
+            if (_selectItemMode && _isFoundItem)
+            {
+                var end = e.GetPosition(canvas);
+                var item = _drawnShapes[_posOfSelectedItem];
+                switch (item)
+                {
+                    case LineEntity line:
+                        {
+                            _drawnShapes.RemoveAt(_posOfSelectedItem);
+                            canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                            canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                            Point newStart = new Point(line.Start.X - _start.X + end.X, line.Start.Y - _start.Y + end.Y);
+                            Point newEnd = new Point(line.End.X - _start.X + end.X, line.End.Y - _start.Y + end.Y);
+
+                            _preview = _line.Clone() as IShape;
+                            _preview.HandleStart(newStart);
+                            _preview.HandleEnd(newEnd);
+                            _preview.StrokeThickness = line.StrokeThickness;
+                            _preview.StrokeColor = line.StrokeColor;
+                            IPainter painterLine = _painterPrototypes["Line"];
+                            UIElement realShape = painterLine.Draw(_preview);
+                            canvas.Children.Add(realShape);
+                            _drawnShapes.Add(_preview);
+                            _posOfSelectedItem = _drawnShapes.Count - 1;
+
+                            _selectedBorder = _line.Clone() as IShape;
+                            _selectedBorder.HandleStart(newStart);
+                            _selectedBorder.HandleEnd(newEnd);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            UIElement selectedShape = painterLine.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(selectedShape);
+                            _drawnShapes.Add(_selectedBorder);
+
+                            break;
+                        }
+                    case RectangleEntity rectangle:
+                        {
+                            _drawnShapes.RemoveAt(_posOfSelectedItem);
+                            canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                            canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                            Point newStart = new Point(rectangle.TopLeft.X - _start.X + end.X, rectangle.TopLeft.Y - _start.Y + end.Y);
+                            Point newEnd = new Point(rectangle.BottomRight.X - _start.X + end.X, rectangle.BottomRight.Y - _start.Y + end.Y);
+
+                            _preview = _rectangle.Clone() as IShape;
+                            _preview.HandleStart(newStart);
+                            _preview.HandleEnd(newEnd);
+                            _preview.StrokeThickness = rectangle.StrokeThickness;
+                            _preview.StrokeColor = rectangle.StrokeColor;
+                            IPainter painterRectangle = _painterPrototypes["Rectangle"];
+                            UIElement realShape = painterRectangle.Draw(_preview);
+                            canvas.Children.Add(realShape);
+                            _drawnShapes.Add(_preview);
+                            _posOfSelectedItem = _drawnShapes.Count - 1;
+
+                            _selectedBorder = _rectangle.Clone() as IShape;
+                            _selectedBorder.HandleStart(newStart);
+                            _selectedBorder.HandleEnd(newEnd);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(selectedShape);
+                            _drawnShapes.Add(_selectedBorder);
+
+                            break;
+                        }
+                    case EllipseEntity ellipse:
+                        {
+                            _drawnShapes.RemoveAt(_posOfSelectedItem);
+                            canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                            canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                            Point newStart = new Point(ellipse.TopLeft.X - _start.X + end.X, ellipse.TopLeft.Y - _start.Y + end.Y);
+                            Point newEnd = new Point(ellipse.BottomRight.X - _start.X + end.X, ellipse.BottomRight.Y - _start.Y + end.Y);
+
+                            _preview = _ellipse.Clone() as IShape;
+                            _preview.HandleStart(newStart);
+                            _preview.HandleEnd(newEnd);
+                            _preview.StrokeThickness = ellipse.StrokeThickness;
+                            _preview.StrokeColor = ellipse.StrokeColor;
+                            IPainter painterEllipse = _painterPrototypes["Ellipse"];
+                            UIElement realShape = painterEllipse.Draw(_preview);
+                            canvas.Children.Add(realShape);
+                            _drawnShapes.Add(_preview);
+                            _posOfSelectedItem = _drawnShapes.Count - 1;
+
+                            _selectedBorder = _rectangle.Clone() as IShape;
+                            _selectedBorder.HandleStart(newStart);
+                            _selectedBorder.HandleEnd(newEnd);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPainter painterRectangle = _painterPrototypes["Rectangle"];
+                            UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(selectedShape);
+                            _drawnShapes.Add(_selectedBorder);
+
+                            break;
+                        }
+                    case TriangleEntity triangle:
+                        {
+                            _drawnShapes.RemoveAt(_posOfSelectedItem);
+                            canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                            canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                            Point newStart = new Point(triangle.TopLeft.X - _start.X + end.X, triangle.TopLeft.Y - _start.Y + end.Y);
+                            Point newEnd = new Point(triangle.BottomRight.X - _start.X + end.X, triangle.BottomRight.Y - _start.Y + end.Y);
+
+                            _preview = _triangle.Clone() as IShape;
+                            _preview.HandleStart(newStart);
+                            _preview.HandleEnd(newEnd);
+                            _preview.StrokeThickness = triangle.StrokeThickness;
+                            _preview.StrokeColor = triangle.StrokeColor;
+                            IPainter painterTriangle = _painterPrototypes["Triangle"];
+                            UIElement realShape = painterTriangle.Draw(_preview);
+                            canvas.Children.Add(realShape);
+                            _drawnShapes.Add(_preview);
+                            _posOfSelectedItem = _drawnShapes.Count - 1;
+
+                            _selectedBorder = _line.Clone() as IShape;
+                            _selectedBorder.HandleStart(newStart);
+                            _selectedBorder.HandleEnd(newEnd);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPainter painterRectangle = _painterPrototypes["Rectangle"];
+                            UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(selectedShape);
+                            _drawnShapes.Add(_selectedBorder);
+
+                            break;
+                        }
+                    default:
+                        // code for other types
+                        break;
+                }
+            }
             if (!_selectItemMode)
             {
                 _isDrawing = false;

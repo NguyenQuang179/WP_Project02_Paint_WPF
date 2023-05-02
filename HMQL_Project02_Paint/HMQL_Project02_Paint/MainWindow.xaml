@@ -60,6 +60,8 @@
                       Name="StrokeSizeCombobox">
             </ComboBox>
             <syncfusion:ColorPicker Name="ColorPicker" SelectedBrushChanged="ColorPicker_SelectedBrushChanged"/>
+            <TextBlock Text="{Binding TestX}" Width="100"></TextBlock>
+            <TextBlock Text="{Binding TestY}" Width="100"></TextBlock>
         </StackPanel>
 
         <Canvas Grid.Row="1" x:Name="canvas" Background="White"></Canvas>
