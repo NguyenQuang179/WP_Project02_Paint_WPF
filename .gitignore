@@ -623,3 +623,6 @@ AppPackages/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+HMQL_Project02_Paint/HMQL_Project02_Paint/obj/Debug/net7.0-windows/HMQL_Project02_Paint.GeneratedMSBuildEditorConfig.editorconfig
+HMQL_Project02_Paint/HMQL_Project02_Paint/obj/Debug/net7.0-windows/HMQL_Project02_Paint_MarkupCompile.i.cache
+HMQL_Project02_Paint/HMQL_Project02_Paint/obj/Debug/net7.0-windows/MainWindow.g.i.cs
