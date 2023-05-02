@@ -53,7 +53,7 @@
                     Margin="0 0 16 0"
                     Content="Test">
             </Button>
-            <ComboBox Width="56" SelectionChanged="ComboBox_SelectionChanged"
+            <ComboBox Width="56" SelectionChanged="StrokeSizeSelectionChanged"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Center"
                       Margin="0 0 16 0"

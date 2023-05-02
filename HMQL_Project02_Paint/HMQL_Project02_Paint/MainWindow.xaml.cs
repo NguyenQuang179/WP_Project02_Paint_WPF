@@ -114,6 +114,7 @@ namespace HMQL_Project02_Paint
 
             public int StrokeThickness { get; set; }
             public Color StrokeColor { get; set; }
+            public DoubleCollection StrokePattern { get; set; }
 
             public void HandleStart(Point point)
             {
@@ -294,6 +295,7 @@ namespace HMQL_Project02_Paint
                 bottomRightPoint
             },
                     StrokeThickness = shape.StrokeThickness,
+                    StrokeDashArray = shape.StrokePattern,
                     Stroke = new SolidColorBrush(shape.StrokeColor)
                 };
                 return element;
