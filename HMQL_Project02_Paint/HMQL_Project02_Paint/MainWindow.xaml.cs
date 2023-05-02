@@ -20,6 +20,12 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
+using System.Xml.Serialization;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Net;
+using System.Xml;
+using static HMQL_Project02_Paint.MainWindow;
 
 namespace HMQL_Project02_Paint
 {
@@ -48,15 +54,20 @@ namespace HMQL_Project02_Paint
             public string Name { get; }
             public int StrokeThickness { get; set; }
             public Color StrokeColor { get; set; }
-            public DoubleCollection StrokePattern {get; set;}
+            public DoubleCollection StrokePattern { get; set; }
             void HandleStart(Point point);
             void HandleEnd(Point point);
         }
+        public class ShapeEntity
+        {
+            public List<IShape> Shapes { get; set; }
+        }
 
-        class LineEntity : IShape
+        public class LineEntity : IShape
         {
             public Point Start { get; set; }
             public Point End { get; set; }
+
 
             public string Name => "Line";
 
@@ -77,12 +88,14 @@ namespace HMQL_Project02_Paint
             {
                 return MemberwiseClone();
             }
+
         }
 
-        class RectangleEntity : IShape
+        public class RectangleEntity : IShape
         {
             public Point TopLeft { get; set; }
             public Point BottomRight { get; set; }
+
             public string Name => "Rectangle";
 
             public int StrokeThickness { get; set; }
@@ -105,11 +118,12 @@ namespace HMQL_Project02_Paint
             }
         }
 
-        class TriangleEntity : IShape
+        public class TriangleEntity : IShape
         {
             public Point TopLeft { get; set; }
             public Point BottomRight { get; set; }
 
+            [XmlIgnore]
             public string Name => "Triangle";
 
             public int StrokeThickness { get; set; }
@@ -144,60 +158,61 @@ namespace HMQL_Project02_Paint
                 // Define the two points at the top of the isosceles triangle
                 double sideLength = Math.Sqrt(Math.Pow(baseWidth / 2, 2) + Math.Pow(height, 2));
                 Point leftVertex = new Point(baseCenter.X - baseWidth / 2, baseCenter.Y - sideLength);
+    
                 Point rightVertex = new Point(baseCenter.X + baseWidth / 2, baseCenter.Y - sideLength);
 
-                vertices[0] = leftVertex;
-                vertices[1] = rightVertex;
-                vertices[2] = baseCenter;
+                    vertices[0] = leftVertex;
+                    vertices[1] = rightVertex;
+                    vertices[2] = baseCenter;
 
-                return vertices;
+                    return vertices;
+                }
             }
-        }
 
-
-        class EllipseEntity : IShape
-        {
-            public Point TopLeft { get; set; }
-            public Point BottomRight { get; set; }
+        public class EllipseEntity : IShape
+            {
+                public Point TopLeft { get; set; }
+                public Point BottomRight { get; set; }
+            [XmlIgnore]
             public string Name => "Ellipse";
 
-            public int StrokeThickness { get; set; }
-            public Color StrokeColor { get; set; }
-            public DoubleCollection StrokePattern { get; set; }
+                public int StrokeThickness { get; set; }
+                public Color StrokeColor { get; set; }
+                public DoubleCollection StrokePattern { get; set; }
 
-            public void HandleStart(Point point)
-            {
-                TopLeft = point;
+                public void HandleStart(Point point)
+                {
+                    TopLeft = point;
+                }
+
+                public void HandleEnd(Point point)
+                {
+                    BottomRight = point;
+                }
+
+                public object Clone()
+                {
+                    return MemberwiseClone();
+                }
             }
 
-            public void HandleEnd(Point point)
+            public List<int> thicknessValues = new List<int> { 1, 3, 5, 7, 9 };
+            public List<DoubleCollection> listOfPatterns = new List<DoubleCollection>
             {
-                BottomRight = point;
-            }
-
-            public object Clone()
+                new DoubleCollection { 1, 0 },
+                new DoubleCollection { 1, 3 },
+                new DoubleCollection { 3, 3 },
+                new DoubleCollection { 5, 3 },
+                new DoubleCollection { 1, 5, 5, 5 },
+                new DoubleCollection { 5, 3, 1, 3, 1, 3}
+            };
+            public DoubleCollection strokePattern = new DoubleCollection { 1, 0 };  
+            public int strokeThickness = 1;
+            ColorAutoChange strokeColor = new ColorAutoChange();
+            public interface IPainter
             {
-                return MemberwiseClone();
+                UIElement Draw(IShape shape);
             }
-        }
-
-        public List<int> thicknessValues = new List<int> { 1, 3, 5, 7, 9 };
-        public List<DoubleCollection> listOfPatterns = new List<DoubleCollection>
-        {
-            new DoubleCollection { 1, 0 },
-            new DoubleCollection { 1, 3 },
-            new DoubleCollection { 3, 3 },
-            new DoubleCollection { 5, 3 },
-            new DoubleCollection { 1, 5, 5, 5 },
-            new DoubleCollection { 5, 3, 1, 3, 1, 3}
-        };
-        public DoubleCollection strokePattern = new DoubleCollection { 1, 0 };  
-        public int strokeThickness = 1;
-        ColorAutoChange strokeColor = new ColorAutoChange();
-        public interface IPainter
-        {
-            UIElement Draw(IShape shape);
-        }
 
         class LinePainter : IPainter
         {
@@ -777,6 +792,30 @@ namespace HMQL_Project02_Paint
         private void deleteTest_Click(object sender, RoutedEventArgs e)
         {
             canvas.Children.RemoveAt(_posOfSelectedItem);
+        }
+
+
+        private void save_Click(object sender, RoutedEventArgs e)
+        {
+            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shapes.xml");
+            SerializeInterface.SerializeShapes(_drawnShapes, filePath);
+        }
+
+        private void load_Click(object sender, RoutedEventArgs e)
+        {
+            string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shapes.xml");
+            _drawnShapes = SerializeInterface.DeserializeShapes(filePath);
+            //Xóa đi tất cả bản vẽ củ
+            canvas.Children.Clear();
+
+            //Vẽ lại các điểm đã lưu (convert nó thành list chứa UI element và loại
+            foreach (var item in _drawnShapes)
+            {
+                IPainter painter = _painterPrototypes[item.Name];
+                UIElement shape = painter.Draw(item); // vẽ ra tương ứng với loại entity
+                canvas.Children.Add(shape);
+            }
+
         }
     }
 }
