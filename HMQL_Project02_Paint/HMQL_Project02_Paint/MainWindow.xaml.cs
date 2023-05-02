@@ -6,6 +6,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -47,6 +48,7 @@ namespace HMQL_Project02_Paint
             public string Name { get; }
             public int StrokeThickness { get; set; }
             public Color StrokeColor { get; set; }
+            public DoubleCollection StrokePattern {get; set;}
             void HandleStart(Point point);
             void HandleEnd(Point point);
         }
@@ -60,6 +62,7 @@ namespace HMQL_Project02_Paint
 
             public int StrokeThickness { get; set; }
             public Color StrokeColor { get; set; }
+            public DoubleCollection StrokePattern { get; set; }
 
             public void HandleStart(Point point)
             {
@@ -84,6 +87,7 @@ namespace HMQL_Project02_Paint
 
             public int StrokeThickness { get; set; }
             public Color StrokeColor { get; set; }
+            public DoubleCollection StrokePattern { get; set; }
 
             public void HandleStart(Point point)
             {
@@ -110,6 +114,7 @@ namespace HMQL_Project02_Paint
 
             public int StrokeThickness { get; set; }
             public Color StrokeColor { get; set; }
+            public DoubleCollection StrokePattern { get; set; }
 
             public void HandleStart(Point point)
             {
@@ -158,6 +163,7 @@ namespace HMQL_Project02_Paint
 
             public int StrokeThickness { get; set; }
             public Color StrokeColor { get; set; }
+            public DoubleCollection StrokePattern { get; set; }
 
             public void HandleStart(Point point)
             {
@@ -176,6 +182,16 @@ namespace HMQL_Project02_Paint
         }
 
         public List<int> thicknessValues = new List<int> { 1, 3, 5, 7, 9 };
+        public List<DoubleCollection> listOfPatterns = new List<DoubleCollection>
+        {
+            new DoubleCollection { 1, 0 },
+            new DoubleCollection { 1, 3 },
+            new DoubleCollection { 3, 3 },
+            new DoubleCollection { 5, 3 },
+            new DoubleCollection { 1, 5, 5, 5 },
+            new DoubleCollection { 5, 3, 1, 3, 1, 3}
+        };
+        public DoubleCollection strokePattern = new DoubleCollection { 1, 0 };  
         public int strokeThickness = 1;
         ColorAutoChange strokeColor = new ColorAutoChange();
         public interface IPainter
@@ -195,6 +211,7 @@ namespace HMQL_Project02_Paint
                     X2 = line.End.X,
                     Y2 = line.End.Y,
                     StrokeThickness = shape.StrokeThickness,
+                    StrokeDashArray = shape.StrokePattern,
                     Stroke = new SolidColorBrush(shape.StrokeColor)
                 };
                 return element;
@@ -217,6 +234,7 @@ namespace HMQL_Project02_Paint
                     Width = width,
                     Height = height,
                     StrokeThickness = shape.StrokeThickness,
+                    StrokeDashArray = shape.StrokePattern,
                     Stroke = new SolidColorBrush(shape.StrokeColor)
                 };
                 Canvas.SetLeft(element, x);
@@ -240,6 +258,7 @@ namespace HMQL_Project02_Paint
                     Width = width,
                     Height = height,
                     StrokeThickness = shape.StrokeThickness,
+                    StrokeDashArray = shape.StrokePattern,
                     Stroke = new SolidColorBrush(shape.StrokeColor)
                 };
                 Canvas.SetLeft(element, x);
@@ -276,6 +295,7 @@ namespace HMQL_Project02_Paint
                 bottomRightPoint
             },
                     StrokeThickness = shape.StrokeThickness,
+                    StrokeDashArray = shape.StrokePattern,
                     Stroke = new SolidColorBrush(shape.StrokeColor)
                 };
                 return element;
@@ -459,6 +479,7 @@ namespace HMQL_Project02_Paint
                 _preview.HandleStart(_start);
                 _preview.StrokeThickness = strokeThickness;
                 _preview.StrokeColor = strokeColor.color;
+                _preview.StrokePattern = strokePattern;
             }
         }
 
@@ -468,21 +489,10 @@ namespace HMQL_Project02_Paint
             {
                 var end = e.GetPosition(canvas);
                 _preview.HandleEnd(end);
-
-                //Xóa đi tất cả bản vẽ củ
-                canvas.Children.Clear();
-
-                //Vẽ lại các điểm đã lưu (convert nó thành list chứa UI element và loại
-                foreach (var item in _drawnShapes)
-                {
-                    IPainter painter = _painterPrototypes[item.Name];
-                    UIElement shape = painter.Draw(item); // vẽ ra tương ứng với loại entity
-                    canvas.Children.Add(shape);
-                }
-
                 var previewPainter = _painterPrototypes[_type];
                 var previewElement = previewPainter.Draw(_preview);
                 canvas.Children.Add(previewElement);
+                if (canvas.Children.Count > 1) canvas.Children.RemoveAt(canvas.Children.Count - 2);
             }
 
         }
@@ -632,6 +642,9 @@ namespace HMQL_Project02_Paint
                 var end = e.GetPosition(canvas);
                 _preview.HandleEnd(end);
                 _drawnShapes.Add(_preview.Clone() as IShape);
+                IPainter painter = _painterPrototypes[_preview.Name];
+                UIElement shape = painter.Draw(_preview);
+                canvas.Children.Add(shape);
                 _redoList.Clear();
             }
         }
@@ -644,8 +657,12 @@ namespace HMQL_Project02_Paint
         Dictionary<string, IShape> _shapePrototypes;
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            StrokeSizeCombobox.SelectedIndex = 0;
             StrokeSizeCombobox.ItemsSource = thicknessValues;
+            StrokeSizeCombobox.SelectedIndex = 0;
+
+            StrokePatternCombobox.ItemsSource = listOfPatterns;
+            StrokePatternCombobox.SelectedIndex = 0;
+
             ColorPicker.Color = Colors.Black;
             _painterPrototypes = new Dictionary<string, IPainter>
             {
@@ -736,10 +753,16 @@ namespace HMQL_Project02_Paint
             }
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void StrokeSizeSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedSize = StrokeSizeCombobox.SelectedIndex;
             strokeThickness = thicknessValues[selectedSize];
+        }
+
+        private void StrokePatternSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DoubleCollection selectedPattern = StrokePatternCombobox.SelectedItem as DoubleCollection;
+            strokePattern = selectedPattern;
         }
 
         private void ColorPicker_SelectedBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
