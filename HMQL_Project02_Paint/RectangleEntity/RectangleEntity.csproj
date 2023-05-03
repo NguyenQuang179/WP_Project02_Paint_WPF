@@ -7,7 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="rectangle-icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\IContract\IContract.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="rectangle-icon.png" />
   </ItemGroup>
 
 </Project>

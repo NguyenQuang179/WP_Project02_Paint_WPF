@@ -8,10 +8,10 @@ namespace LineEntity
 {
     public class LineEntity : IShapeEntity
     {
-        public BitmapImage Icon => new BitmapImage(new Uri("pack://application:,,,/LineEntity;component/line-icon.png", UriKind.Relative));
+        public BitmapImage Icon => new BitmapImage(new Uri("/LineEntity;component/line-icon.png", UriKind.Relative));
 
-        public Point Start { get; set; }
-        public Point End { get; set; }
+        public Point TopLeft { get; set; }
+        public Point BottomRight { get; set; }
 
         public string Name => "Line";
 
@@ -21,12 +21,12 @@ namespace LineEntity
 
         public void HandleStart(Point point)
         {
-            Start = point;
+            TopLeft = point;
         }
 
         public void HandleEnd(Point point)
         {
-            End = point;
+            BottomRight = point;
         }
 
         public object Clone()

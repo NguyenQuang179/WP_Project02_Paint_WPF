@@ -17,10 +17,10 @@ namespace LineEntity
             var line = shape as LineEntity;
             var element = new Line()
             {
-                X1 = line.Start.X,
-                Y1 = line.Start.Y,
-                X2 = line.End.X,
-                Y2 = line.End.Y,
+                X1 = line.TopLeft.X,
+                Y1 = line.TopLeft.Y,
+                X2 = line.BottomRight.X,
+                Y2 = line.BottomRight.Y,
                 StrokeThickness = shape.StrokeThickness,
                 StrokeDashArray = shape.StrokePattern,
                 Stroke = new SolidColorBrush(shape.StrokeColor)

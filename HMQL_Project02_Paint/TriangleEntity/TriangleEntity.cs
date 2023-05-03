@@ -8,7 +8,7 @@ namespace TriangleEntity
 {
     public class TriangleEntity : IShapeEntity
     {
-        public BitmapImage Icon => new BitmapImage(new Uri("pack://application:,,,/LineEntity;component/triangle-icon.png", UriKind.Relative));
+        public BitmapImage Icon => new BitmapImage(new Uri("/TriangleEntity;component/triangle-icon.png", UriKind.Relative));
         public Point TopLeft { get; set; }
         public Point BottomRight { get; set; }
 

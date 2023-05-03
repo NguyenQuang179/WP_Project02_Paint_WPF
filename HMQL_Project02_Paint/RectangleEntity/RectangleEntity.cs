@@ -8,7 +8,7 @@ namespace RectangleEntity
 {
     public class RectangleEntity : IShapeEntity
     {
-        public BitmapImage Icon => new BitmapImage(new Uri("pack://application:,,,/LineEntity;component/rectangle-icon.png", UriKind.Relative));
+        public BitmapImage Icon => new BitmapImage(new Uri("/RectangleEntity;component/rectangle-icon.png", UriKind.Relative));
         public Point TopLeft { get; set; }
         public Point BottomRight { get; set; }
         public string Name => "Rectangle";
