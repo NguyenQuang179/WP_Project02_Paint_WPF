@@ -2,11 +2,13 @@ using IContract;
 using System;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace EllipseEntity
 {
     public class EllipseEntity : IShapeEntity
     {
+        public BitmapImage Icon => new BitmapImage(new Uri("pack://application:,,,/LineEntity;component/ellipse-icon.png", UriKind.Relative));
         public Point TopLeft { get; set; }
         public Point BottomRight { get; set; }
         public string Name => "Ellipse";
