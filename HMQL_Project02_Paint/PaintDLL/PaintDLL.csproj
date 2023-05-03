@@ -8,23 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="image\ellipse-icon.png" />
-    <None Remove="image\line-icon.png" />
-    <None Remove="image\rectangle-icon.png" />
-    <None Remove="image\triangle-icon.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.0" />
-    <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
-    <PackageReference Include="Syncfusion.Shared.WPF" Version="21.1.41" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\IContract\IContract.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="EllipseEntity">
       <HintPath>bin\Debug\net7.0-windows\EllipseEntity.dll</HintPath>
     </Reference>
@@ -40,13 +23,6 @@
     <Reference Include="TriangleEntity">
       <HintPath>bin\Debug\net7.0-windows\TriangleEntity.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="image\ellipse-icon.png" />
-    <Resource Include="image\line-icon.png" />
-    <Resource Include="image\rectangle-icon.png" />
-    <Resource Include="image\triangle-icon.png" />
   </ItemGroup>
 
 </Project>
