@@ -1,4 +1,4 @@
-﻿using IContract;
+using IContract;
 using Syncfusion.Windows.Shared;
 using System;
 using System.Collections;
@@ -38,14 +38,71 @@ namespace HMQL_Project02_Paint
             InitializeComponent();
         }
 
-        private bool _isDrawing = false;
-        private bool _selectItemMode = false;
-        private bool _isFoundItem = false;
-        private int _posOfSelectedItem = -1;
-        private Point _start;
+        bool _isDrawing = false;
+        bool _selectItemMode = false;
+        bool _isFoundItem = false;
+        bool _canBeMoved = false;
+        int _posOfSelectedItem = -1;
+        Point _start;
 
         public Double TestX = 0;
         public Double TestY = 0;
+        public interface IShape : ICloneable
+        {
+            public string Name { get; }
+            public int StrokeThickness { get; set; }
+            public Color StrokeColor { get; set; }
+            public DoubleCollection StrokePattern { get; set; }
+            void HandleStart(Point point);
+            void HandleEnd(Point point);
+        }
+
+        class LineEntity : IShape
+        {
+            public Point Start { get; set; }
+            public Point End { get; set; }
+
+            public string Name => "Line";
+
+            public int StrokeThickness { get; set; }
+            public Color StrokeColor { get; set; }
+            public DoubleCollection StrokePattern { get; set; }
+
+            public void HandleStart(Point point)
+            {
+                Start = point;
+            }
+
+            public void HandleEnd(Point point)
+            {
+                End = point;
+            }
+            public object Clone()
+            {
+                return MemberwiseClone();
+            }
+        }
+
+        class RectangleEntity : IShape
+        {
+            public Point TopLeft { get; set; }
+            public Point BottomRight { get; set; }
+            public string Name => "Rectangle";
+
+            public int StrokeThickness { get; set; }
+            public Color StrokeColor { get; set; }
+            public DoubleCollection StrokePattern { get; set; }
+
+            public void HandleStart(Point point)
+            {
+                TopLeft = point;
+            }
+
+            public void HandleEnd(Point point)
+            {
+                BottomRight = point;
+            }
+
 
         //public interface IShapeEntity : ICloneable
         //{
@@ -359,6 +416,7 @@ namespace HMQL_Project02_Paint
             }
         }
 
+
         //public bool isInShape()
         //{
         //    _isFoundItem = false;
@@ -471,22 +529,33 @@ namespace HMQL_Project02_Paint
         {
             if (_selectItemMode && !_isFoundItem)
             {
+                _canBeMoved = false;
                 _start = e.GetPosition(canvas);
+
                 //if (isInShape())
                 //{
                 //    _isFoundItem = true;
                 //}
+
             }
             else if (_selectItemMode && _isFoundItem)
             {
-                _start = e.GetPosition(canvas);
 
+                _start = e.GetPosition(canvas);
+                int temp = _posOfSelectedItem;
                 _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
                 canvas.Children.RemoveAt(canvas.Children.Count - 1);
+
                 //if (isInShape())
                 //{
                 //    _isFoundItem = true;
                 //}
+                //if (temp != _posOfSelectedItem)
+                //{
+                //    _canBeMoved = false;
+                //    _redoList.Clear();
+                //}
+
             }
             else
             {
@@ -514,10 +583,11 @@ namespace HMQL_Project02_Paint
 
         private void Border_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_selectItemMode && _isFoundItem)
+            if (_selectItemMode && _isFoundItem && _canBeMoved)
             {
                 var end = e.GetPosition(canvas);
                 var item = _drawnShapes[_posOfSelectedItem];
+
 
                 //switch (item)
                 //{
@@ -651,6 +721,11 @@ namespace HMQL_Project02_Paint
                 //        // code for other types
                 //        break;
                 //}
+
+            }
+            if (_selectItemMode && _isFoundItem)
+            {
+                _canBeMoved = true;
             }
             if (!_selectItemMode)
             {
@@ -783,6 +858,7 @@ namespace HMQL_Project02_Paint
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+
             var button = sender as Button;
             var entity = button!.Tag as IShapeEntity;
 
@@ -817,17 +893,67 @@ namespace HMQL_Project02_Paint
         //    _preview = _triangle.Clone() as IShapeEntity;
         //}
 
+        //    if (_selectItemMode)
+        //    {
+        //        _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+        //        //canvas.Children.RemoveAt(canvas.Children.Count - 1);
+        //        _posOfSelectedItem = -1;
+        //        _isFoundItem = false;
+        //    }
+        //    _type = _line.Name;
+        //    _preview = _line.Clone() as IShape;
+        //    _selectItemMode = false;
+        //}
+
+
+
         private void chooseShapeButton_Click(object sender, RoutedEventArgs e)
         {
+            canvas.Children.RemoveAt(canvas.Children.Count - 1);
             _selectItemMode = true;
         }
+
+
+        //private void triangleButton_Click(Object sender, RoutedEventArgs e)
+        //{
+        //    if (_selectItemMode)
+        //    {
+        //        _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+        //        //canvas.Children.RemoveAt(canvas.Children.Count - 1);
+        //        _posOfSelectedItem = -1;
+        //        _isFoundItem = false;
+        //    }
+        //    _type = _triangle.Name;
+        //    _preview = _triangle.Clone() as IShape;
+        //}
 
         private void undoButton_Click(object sender, RoutedEventArgs e)
         {
             if (_drawnShapes.Count <= 0) return;
-            IShapeEntity element = _drawnShapes[_drawnShapes.Count - 1];
-            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
-            _redoList.Add(element);
+            if (_selectItemMode)
+            {
+                if (_redoList.Count <= 0) return;
+                //IShape elementOfDraw1 = _drawnShapes[_drawnShapes.Count - 2];
+                //IShape elementOfDraw2 = _drawnShapes[_drawnShapes.Count - 1];
+
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+
+                IShape element1 = _redoList[_redoList.Count - 2];
+                _redoList.RemoveAt(_redoList.Count - 2);
+                _drawnShapes.Add(element1);
+
+                IShape element2 = _redoList[_redoList.Count - 1];
+                _redoList.RemoveAt(_redoList.Count - 1);
+                _drawnShapes.Add(element2);
+            }
+            else
+            {
+                IShape element = _drawnShapes[_drawnShapes.Count - 1];
+                _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                _redoList.Add(element);
+            }
+
             //Xóa đi tất cả bản vẽ củ
             canvas.Children.Clear();
 
@@ -843,7 +969,13 @@ namespace HMQL_Project02_Paint
         private void redoButton_Click(object sender, RoutedEventArgs e)
         {
             if (_redoList.Count <= 0) return;
-            IShapeEntity element = _redoList[_redoList.Count - 1];
+
+            if (_selectItemMode)
+            {
+                return;
+            }
+            IShape element = _redoList[_redoList.Count - 1];
+
             _redoList.RemoveAt(_redoList.Count - 1);
             _drawnShapes.Add(element);
             //Xóa đi tất cả bản vẽ củ
