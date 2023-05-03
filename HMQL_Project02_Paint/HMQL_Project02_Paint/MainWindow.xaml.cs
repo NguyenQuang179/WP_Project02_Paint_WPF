@@ -41,7 +41,7 @@ namespace HMQL_Project02_Paint
         private bool _isDrawing = false;
         private bool _selectItemMode = false;
         private bool _isFoundItem = false;
-        bool _canBeMoved = false;
+        private bool _canBeMoved = false;
         private int _posOfSelectedItem = -1;
         private Point _start;
 
@@ -736,12 +736,6 @@ namespace HMQL_Project02_Paint
 
                 foreach (Type type in types)
                 {
-                    //Console.WriteLine(type.FullName);
-                    //if (type.Name == "LineEntity")
-                    //{
-                    //    MessageBox.Show(type.Name);
-                    //}
-
                     if (type.IsClass)
                     {
                         if (typeof(IShapeEntity).IsAssignableFrom(type))
@@ -771,14 +765,6 @@ namespace HMQL_Project02_Paint
             {
                 var button = new Button();
                 button.Tag = entity;
-                //button.Content = name;
-                //button.Content = new Image
-                //{
-                //    Source = new BitmapImage(new Uri("/WpfApplication1;component/image/line-icon.jpg", UriKind.RelativeOrAbsolute)),
-                //    VerticalAlignment = VerticalAlignment.Center,
-                //    HorizontalAlignment = HorizontalAlignment.Center,
-                //};
-
                 button.Content = new Image
                 {
                     Source = entity.Icon,
@@ -828,6 +814,7 @@ namespace HMQL_Project02_Paint
             //    {_ellipse.Name, new EllipseEntity() },
             //    {_triangle.Name, new TriangleEntity() }
             //};
+
             //_currentType = _line.Name;
             //_preview = (IShapeEntity)_shapePrototypes[_type].Clone();
 
@@ -838,6 +825,12 @@ namespace HMQL_Project02_Paint
         {
             if (_selectItemMode)
             {
+                if (_posOfSelectedItem == -1)
+                {
+                    var previewPainter = _painterPrototypes[_drawnShapes[_drawnShapes.Count - 1].Name];
+                    var previewElement = previewPainter.Draw(_drawnShapes[_drawnShapes.Count - 1]);
+                    canvas.Children.Add(previewElement);
+                }
                 _selectItemMode = false;
                 _canBeMoved = false;
                 _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
@@ -881,10 +874,13 @@ namespace HMQL_Project02_Paint
 
         private void chooseShapeButton_Click(object sender, RoutedEventArgs e)
         {
+            if (canvas.Children.Count == 0) return;
+            if (_selectItemMode) return;
             _selectItemMode = true;
             _isFoundItem = false;
             _posOfSelectedItem = -1;
             _canBeMoved = false;
+
             canvas.Children.RemoveAt(canvas.Children.Count - 1);
         }
 
