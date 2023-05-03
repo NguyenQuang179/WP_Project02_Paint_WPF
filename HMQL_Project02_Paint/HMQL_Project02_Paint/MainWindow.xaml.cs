@@ -1,36 +1,19 @@
+using Microsoft.Win32;
 ﻿using IContract;
 using Syncfusion.Windows.Shared;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Converters;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml.Linq;
-using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace HMQL_Project02_Paint
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    ///
-
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -45,150 +28,7 @@ namespace HMQL_Project02_Paint
         private int _posOfSelectedItem = -1;
         private Point _start;
 
-        public Double TestX = 0;
-        public Double TestY = 0;
-
-        //public interface IShapeEntity : ICloneable
-        //{
-        //    public string Name { get; }
-        //    public int StrokeThickness { get; set; }
-        //    public Color StrokeColor { get; set; }
-        //    public DoubleCollection StrokePattern { get; set; }
-
-        //    void HandleStart(Point point);
-
-        //    void HandleEnd(Point point);
-        //}
-
-        //private class LineEntity : IShapeEntity
-        //{
-        //    public Point Start { get; set; }
-        //    public Point End { get; set; }
-
-        //    public string Name => "Line";
-
-        //    public int StrokeThickness { get; set; }
-        //    public Color StrokeColor { get; set; }
-        //    public DoubleCollection StrokePattern { get; set; }
-
-        //    public void HandleStart(Point point)
-        //    {
-        //        Start = point;
-        //    }
-
-        //    public void HandleEnd(Point point)
-        //    {
-        //        End = point;
-        //    }
-
-        //    public object Clone()
-        //    {
-        //        return MemberwiseClone();
-        //    }
-        //}
-
-        //private class RectangleEntity : IShapeEntity
-        //{
-        //    public Point TopLeft { get; set; }
-        //    public Point BottomRight { get; set; }
-        //    public string Name => "Rectangle";
-
-        //    public int StrokeThickness { get; set; }
-        //    public Color StrokeColor { get; set; }
-        //    public DoubleCollection StrokePattern { get; set; }
-
-        //    public void HandleStart(Point point)
-        //    {
-        //        TopLeft = point;
-        //    }
-
-        //    public void HandleEnd(Point point)
-        //    {
-        //        BottomRight = point;
-        //    }
-
-        //    public object Clone()
-        //    {
-        //        return MemberwiseClone();
-        //    }
-        //}
-
-        //private class TriangleEntity : IShapeEntity
-        //{
-        //    public Point TopLeft { get; set; }
-        //    public Point BottomRight { get; set; }
-
-        //    public string Name => "Triangle";
-
-        //    public int StrokeThickness { get; set; }
-        //    public Color StrokeColor { get; set; }
-        //    public DoubleCollection StrokePattern { get; set; }
-
-        //    public void HandleStart(Point point)
-        //    {
-        //        TopLeft = point;
-        //    }
-
-        //    public void HandleEnd(Point point)
-        //    {
-        //        BottomRight = point;
-        //    }
-
-        //    public object Clone()
-        //    {
-        //        return MemberwiseClone();
-        //    }
-
-        //    public Point[] GetVertices()
-        //    {
-        //        Point[] vertices = new Point[3];
-        //        double width = BottomRight.X - TopLeft.X;
-        //        double height = BottomRight.Y - TopLeft.Y;
-
-        //        // Define the base of the isosceles triangle
-        //        double baseWidth = 0.8 * width;
-        //        Point baseCenter = new Point(TopLeft.X + width / 2, TopLeft.Y + height);
-
-        //        // Define the two points at the top of the isosceles triangle
-        //        double sideLength = Math.Sqrt(Math.Pow(baseWidth / 2, 2) + Math.Pow(height, 2));
-        //        Point leftVertex = new Point(baseCenter.X - baseWidth / 2, baseCenter.Y - sideLength);
-        //        Point rightVertex = new Point(baseCenter.X + baseWidth / 2, baseCenter.Y - sideLength);
-
-        //        vertices[0] = leftVertex;
-        //        vertices[1] = rightVertex;
-        //        vertices[2] = baseCenter;
-
-        //        return vertices;
-        //    }
-        //}
-
-        //private class EllipseEntity : IShapeEntity
-        //{
-        //    public Point TopLeft { get; set; }
-        //    public Point BottomRight { get; set; }
-        //    public string Name => "Ellipse";
-
-        //    public int StrokeThickness { get; set; }
-        //    public Color StrokeColor { get; set; }
-        //    public DoubleCollection StrokePattern { get; set; }
-
-        //    public void HandleStart(Point point)
-        //    {
-        //        TopLeft = point;
-        //    }
-
-        //    public void HandleEnd(Point point)
-        //    {
-        //        BottomRight = point;
-        //    }
-
-        //    public object Clone()
-        //    {
-        //        return MemberwiseClone();
-        //    }
-        //}
-
-        public List<int> thicknessValues = new List<int> { 1, 3, 5, 7, 9 };
+        public List<int> thicknessValues = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
         public List<DoubleCollection> listOfPatterns = new List<DoubleCollection>
         {
@@ -200,116 +40,19 @@ namespace HMQL_Project02_Paint
             new DoubleCollection { 5, 3, 1, 3, 1, 3}
         };
 
+        public List<string> listOfPatternNames = new List<string>
+        {
+            "Line",
+            "Dot",
+            "Short Dash",
+            "Long Dash",
+            "Dot Dash",
+            "Dash Dot Dot"
+        };
+
         public DoubleCollection strokePattern = new DoubleCollection { 1, 0 };
         public int strokeThickness = 1;
         private ColorAutoChange strokeColor = new ColorAutoChange();
-
-        //public interface IPaintBusiness
-        //{
-        //    UIElement Draw(IShapeEntity shape);
-        //}
-
-        //private class LinePainter : IPaintBusiness
-        //{
-        //    public UIElement Draw(IShapeEntity shape)
-        //    {
-        //        var line = shape as LineEntity;
-        //        var element = new Line()
-        //        {
-        //            X1 = line.Start.X,
-        //            Y1 = line.Start.Y,
-        //            X2 = line.End.X,
-        //            Y2 = line.End.Y,
-        //            StrokeThickness = shape.StrokeThickness,
-        //            StrokeDashArray = shape.StrokePattern,
-        //            Stroke = new SolidColorBrush(shape.StrokeColor)
-        //        };
-        //        return element;
-        //    }
-        //}
-
-        //private class RectanglePainter : IPaintBusiness
-        //{
-        //    public UIElement Draw(IShapeEntity shape)
-        //    {
-        //        var rectangle = shape as RectangleEntity;
-        //        double x = Math.Min(rectangle.TopLeft.X, rectangle.BottomRight.X);
-        //        double y = Math.Min(rectangle.TopLeft.Y, rectangle.BottomRight.Y);
-        //        double width = Math.Abs(rectangle.TopLeft.X - rectangle.BottomRight.X);
-        //        double height = Math.Abs(rectangle.TopLeft.Y - rectangle.BottomRight.Y);
-
-        //        var element = new Rectangle()
-        //        {
-        //            Width = width,
-        //            Height = height,
-        //            StrokeThickness = shape.StrokeThickness,
-        //            StrokeDashArray = shape.StrokePattern,
-        //            Stroke = new SolidColorBrush(shape.StrokeColor)
-        //        };
-        //        Canvas.SetLeft(element, x);
-        //        Canvas.SetTop(element, y);
-        //        return element;
-        //    }
-        //}
-
-        //private class EllipsePainter : IPaintBusiness
-        //{
-        //    public UIElement Draw(IShapeEntity shape)
-        //    {
-        //        var ellipse = shape as EllipseEntity;
-        //        double x = Math.Min(ellipse.TopLeft.X, ellipse.BottomRight.X);
-        //        double y = Math.Min(ellipse.TopLeft.Y, ellipse.BottomRight.Y);
-        //        double width = Math.Abs(ellipse.TopLeft.X - ellipse.BottomRight.X);
-        //        double height = Math.Abs(ellipse.TopLeft.Y - ellipse.BottomRight.Y);
-
-        //        var element = new Ellipse()
-        //        {
-        //            Width = width,
-        //            Height = height,
-        //            StrokeThickness = shape.StrokeThickness,
-        //            StrokeDashArray = shape.StrokePattern,
-        //            Stroke = new SolidColorBrush(shape.StrokeColor)
-        //        };
-        //        Canvas.SetLeft(element, x);
-        //        Canvas.SetTop(element, y);
-        //        return element;
-        //    }
-        //}
-
-        //private class TrianglePainter : IPaintBusiness
-        //{
-        //    public UIElement Draw(IShapeEntity shape)
-        //    {
-        //        var triangle = shape as TriangleEntity;
-        //        Point topLeft = triangle.TopLeft;
-        //        Point bottomRight = triangle.BottomRight;
-
-        //        double minX = Math.Min(triangle.TopLeft.X, triangle.BottomRight.X);
-        //        double minY = Math.Min(triangle.TopLeft.Y, triangle.BottomRight.Y);
-        //        double maxX = Math.Max(triangle.TopLeft.X, triangle.BottomRight.X);
-        //        double maxY = Math.Max(triangle.TopLeft.Y, triangle.BottomRight.Y);
-        //        double width = Math.Abs(triangle.TopLeft.X - triangle.BottomRight.X);
-        //        double height = Math.Abs(triangle.TopLeft.Y - triangle.BottomRight.Y);
-
-        //        Point topPoint = new Point(minX + (width / 2), minY);
-        //        Point bottomLeftPoint = new Point(minX, maxY);
-        //        Point bottomRightPoint = new Point(maxX, maxY);
-
-        //        var element = new Polygon()
-        //        {
-        //            Points = new PointCollection()
-        //    {
-        //        topPoint,
-        //        bottomLeftPoint,
-        //        bottomRightPoint
-        //    },
-        //            StrokeThickness = shape.StrokeThickness,
-        //            StrokeDashArray = shape.StrokePattern,
-        //            Stroke = new SolidColorBrush(shape.StrokeColor)
-        //        };
-        //        return element;
-        //    }
-        //}
 
         private List<IShapeEntity> _drawnShapes = new List<IShapeEntity>();
         private List<IShapeEntity> _redoList = new List<IShapeEntity>();
@@ -370,8 +113,6 @@ namespace HMQL_Project02_Paint
                 var item_name = _drawnShapes[i].Name;
                 var line = _shapePrototypes["Line"];
                 var rectangle = _shapePrototypes["Rectangle"];
-                var ellipse = _shapePrototypes["Ellipse"];
-                var triangle = _shapePrototypes["Triangle"];
 
                 if (_isFoundItem) break;
 
@@ -503,6 +244,7 @@ namespace HMQL_Project02_Paint
             }
             else
             {
+                if (_currentType == "") return;
                 _isDrawing = true;
                 _start = e.GetPosition(canvas);
                 _preview.HandleStart(_start);
@@ -514,7 +256,7 @@ namespace HMQL_Project02_Paint
 
         private void Border_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isDrawing)
+            if (_isDrawing && _currentType != "")
             {
                 var end = e.GetPosition(canvas);
                 _preview.HandleEnd(end);
@@ -531,15 +273,15 @@ namespace HMQL_Project02_Paint
             {
                 var end = e.GetPosition(canvas);
                 var item = _drawnShapes[_posOfSelectedItem];
-                var line = _shapePrototypes["Line"];
+
                 var rectangle = _shapePrototypes["Rectangle"];
-                var ellipse = _shapePrototypes["Ellipse"];
-                var triangle = _shapePrototypes["Triangle"];
+                
 
                 switch (item.Name)
                 {
                     case "Line":
                         {
+                            var line = _shapePrototypes["Line"];
                             _redoList.Add(_drawnShapes[_posOfSelectedItem]);
                             _drawnShapes.RemoveAt(_posOfSelectedItem);
                             canvas.Children.RemoveAt(_posOfSelectedItem);
@@ -575,6 +317,7 @@ namespace HMQL_Project02_Paint
                         }
                     case "Rectangle":
                         {
+                            
                             _redoList.Add(_drawnShapes[_posOfSelectedItem]);
                             _drawnShapes.RemoveAt(_posOfSelectedItem);
                             canvas.Children.RemoveAt(_posOfSelectedItem);
@@ -610,6 +353,7 @@ namespace HMQL_Project02_Paint
                         }
                     case "Ellipse":
                         {
+                            var ellipse = _shapePrototypes["Ellipse"];
                             _redoList.Add(_drawnShapes[_posOfSelectedItem]);
                             _drawnShapes.RemoveAt(_posOfSelectedItem);
                             canvas.Children.RemoveAt(_posOfSelectedItem);
@@ -646,6 +390,7 @@ namespace HMQL_Project02_Paint
                         }
                     case "Triangle":
                         {
+                            var triangle = _shapePrototypes["Triangle"];
                             _redoList.Add(_drawnShapes[_posOfSelectedItem]);
                             _drawnShapes.RemoveAt(_posOfSelectedItem);
                             canvas.Children.RemoveAt(_posOfSelectedItem);
@@ -691,6 +436,7 @@ namespace HMQL_Project02_Paint
             }
             if (!_selectItemMode)
             {
+                if (_currentType == "") return;
                 _isDrawing = false;
                 var end = e.GetPosition(canvas);
                 _preview.HandleEnd(end);
@@ -701,15 +447,6 @@ namespace HMQL_Project02_Paint
                 _redoList.Clear();
             }
         }
-
-        //private LineEntity _line = new LineEntity();
-
-        //private RectangleEntity _rectangle = new RectangleEntity();
-        //private EllipseEntity _ellipse = new EllipseEntity();
-        //private TriangleEntity _triangle = new TriangleEntity();
-
-        //private Dictionary<string, IPaintBusiness> _painterPrototypes;
-        //private Dictionary<string, IShapeEntity> _shapePrototypes;
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -723,9 +460,6 @@ namespace HMQL_Project02_Paint
 
             foreach (var dll in dllFiles)
             {
-                //var domain = AppDomain.CurrentDomain;
-                //Assembly assembly = domain.Load(
-                //    AssemblyName.GetAssemblyName(dll.FullName));
                 Assembly assembly = Assembly.LoadFrom(dll.FullName);
 
                 Type[] types = assembly.GetTypes();
@@ -758,8 +492,6 @@ namespace HMQL_Project02_Paint
                 }
             }
 
-            Title = $"Tìm thấy {_shapePrototypes.Count} hình ";
-
             //Tạo ra các nút bấm tương ứng
             foreach (var (name, entity) in _shapePrototypes)
             {
@@ -771,11 +503,18 @@ namespace HMQL_Project02_Paint
                     VerticalAlignment = VerticalAlignment.Center,
                     Stretch = Stretch.Fill,
                     Height = 40,
-                    Width = 40
+                    Width = 40,
                 };
-
                 button.Height = 40;
-                button.Width = 60;
+                button.MinWidth = 56;
+                button.Padding = new Thickness(8, 0, 8, 0);
+                button.BorderBrush = Brushes.DarkGray;
+                button.BorderThickness = new Thickness(1);
+                button.Background = Brushes.Transparent;
+                Border customBorder = new Border();
+                var style = new Style(typeof(Border));
+                style.Setters.Add(new Setter(Border.CornerRadiusProperty, new CornerRadius(4)));
+                button.Resources.Add(typeof(Border), style);
                 button.Margin = new Thickness(0, 0, 16, 0);
                 button.Click += Button_Click;
 
@@ -794,29 +533,10 @@ namespace HMQL_Project02_Paint
             StrokeSizeCombobox.ItemsSource = thicknessValues;
             StrokeSizeCombobox.SelectedIndex = 0;
 
-            StrokePatternCombobox.ItemsSource = listOfPatterns;
+            StrokePatternCombobox.ItemsSource = listOfPatternNames;
             StrokePatternCombobox.SelectedIndex = 0;
 
             ColorPicker.Color = Colors.Black;
-
-            //_painterPrototypes = new Dictionary<string, IPaintBusiness>
-            //{
-            //    {_line.Name, new LinePainter() },
-            //    {_rectangle.Name, new RectanglePainter() },
-            //    {_ellipse.Name, new EllipsePainter() },
-            //     {_triangle.Name, new TrianglePainter() }
-            //};
-
-            //_shapePrototypes = new Dictionary<string, IShapeEntity>
-            //{
-            //    {_line.Name, new LineEntity() },
-            //    {_rectangle.Name, new RectangleEntity() },
-            //    {_ellipse.Name, new EllipseEntity() },
-            //    {_triangle.Name, new TriangleEntity() }
-            //};
-
-            //_currentType = _line.Name;
-            //_preview = (IShapeEntity)_shapePrototypes[_type].Clone();
 
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
         }
@@ -845,33 +565,6 @@ namespace HMQL_Project02_Paint
             _preview = (_shapePrototypes[entity.Name].Clone() as IShapeEntity)!;
         }
 
-        //private void lineButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    _type = _line.Name;
-        //    _preview = _line.Clone() as IShapeEntity;
-        //    _selectItemMode = false;
-        //}
-
-        //private void rectangleButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    _type = _rectangle.Name;
-        //    _preview = _rectangle.Clone() as IShapeEntity;
-        //    _selectItemMode = false;
-        //}
-
-        //private void ellipseButton_Click(Object sender, RoutedEventArgs e)
-        //{
-        //    _type = _ellipse.Name;
-        //    _preview = _ellipse.Clone() as IShapeEntity;
-        //    _selectItemMode = false;
-        //}
-
-        //private void triangleButton_Click(Object sender, RoutedEventArgs e)
-        //{
-        //    _type = _triangle.Name;
-        //    _preview = _triangle.Clone() as IShapeEntity;
-        //}
-
         private void chooseShapeButton_Click(object sender, RoutedEventArgs e)
         {
             if (canvas.Children.Count == 0) return;
@@ -890,8 +583,6 @@ namespace HMQL_Project02_Paint
             if (_selectItemMode)
             {
                 if (_redoList.Count <= 0) return;
-                //IShape elementOfDraw1 = _drawnShapes[_drawnShapes.Count - 2];
-                //IShape elementOfDraw2 = _drawnShapes[_drawnShapes.Count - 1];
 
                 _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
                 _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
@@ -906,6 +597,7 @@ namespace HMQL_Project02_Paint
             }
             else
             {
+                canvas.Children.RemoveAt(canvas.Children.Count -1);
                 IShapeEntity element = _drawnShapes[_drawnShapes.Count - 1];
                 _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
                 _redoList.Add(element);
@@ -918,7 +610,9 @@ namespace HMQL_Project02_Paint
             {
                 IPaintBusiness painter = _painterPrototypes[item.Name];
                 UIElement shape = painter.Draw(item); // vẽ ra tương ứng với loại entity
+                UIElement previewShape = painter.Draw(item);
                 canvas.Children.Add(shape);
+                canvas.Children.Add(previewShape);
             }
         }
 
@@ -929,6 +623,11 @@ namespace HMQL_Project02_Paint
             {
                 return;
             }
+            if (canvas.Children.Count > 0)
+            {
+                canvas.Children.RemoveAt(canvas.Children.Count - 1);
+            }
+            
             IShapeEntity element = _redoList[_redoList.Count - 1];
             _redoList.RemoveAt(_redoList.Count - 1);
             _drawnShapes.Add(element);
@@ -940,7 +639,9 @@ namespace HMQL_Project02_Paint
             {
                 IPaintBusiness painter = _painterPrototypes[item.Name];
                 UIElement shape = painter.Draw(item); // vẽ ra tương ứng với loại entity
+                UIElement previewShape = painter.Draw(item);
                 canvas.Children.Add(shape);
+                canvas.Children.Add(previewShape);
             }
         }
 
@@ -952,8 +653,8 @@ namespace HMQL_Project02_Paint
 
         private void StrokePatternSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DoubleCollection selectedPattern = StrokePatternCombobox.SelectedItem as DoubleCollection;
-            strokePattern = selectedPattern;
+            DoubleCollection pattern = listOfPatterns[StrokePatternCombobox.SelectedIndex];
+            strokePattern = pattern;
         }
 
         private void ColorPicker_SelectedBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -965,9 +666,117 @@ namespace HMQL_Project02_Paint
             strokeColor = newColor;
         }
 
-        private void deleteTest_Click(object sender, RoutedEventArgs e)
+        private void save_Click(object sender, RoutedEventArgs e)
         {
-            canvas.Children.RemoveAt(_posOfSelectedItem);
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "XML File|*.xml";
+            saveFileDialog.Title = "Save File";
+            saveFileDialog.ShowDialog();
+            //string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shapes.xml");
+            if (saveFileDialog.FileName != "")
+            {
+                SerializeInterface.SerializeShapes(_drawnShapes, saveFileDialog.FileName);
+            }
+        }
+
+        private void load_Click(object sender, RoutedEventArgs e)
+        {
+            // open file dialog   
+            OpenFileDialog open = new OpenFileDialog();
+            // image filters  
+            open.Filter = "XML File|*.xml";
+            open.ShowDialog();
+            if (open.FileName != "")
+            {
+                //string filePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "shapes.xml");
+                _drawnShapes = SerializeInterface.DeserializeShapes(open.FileName);
+                //Xóa đi tất cả bản vẽ cũ
+                canvas.Children.Clear();
+
+                UIElement previewPic = new UIElement();
+                //Vẽ lại các điểm đã lưu (convert nó thành list chứa UI element và loại
+                foreach (var item in _drawnShapes)
+                {
+                    IPaintBusiness painter = _painterPrototypes[item.Name];
+                    UIElement shape = painter.Draw(item); // vẽ ra tương ứng với loại entity
+                    canvas.Children.Add(shape);
+                    if (item.Equals(_drawnShapes.Last()))
+                    {
+                        previewPic = painter.Draw(item);
+                        canvas.Children.Add(previewPic);
+                    }
+                }
+            }
+        }
+
+        private void SaveAsButtonClick(object sender, RoutedEventArgs e)
+        {
+            RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas.RenderSize.Width,
+                                        (int)canvas.RenderSize.Height, 96d, 96d, System.Windows.Media.PixelFormats.Default);
+            rtb.Render(canvas);
+            var crop = new CroppedBitmap(rtb, new Int32Rect(0, 100, rtb.PixelWidth, rtb.PixelHeight - 100));
+            BitmapEncoder pngEncoder = new PngBitmapEncoder();
+            BitmapEncoder jpegEncoder = new JpegBitmapEncoder();
+            BitmapEncoder bmpEncoder = new BmpBitmapEncoder();
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "PNG Image|*.png|JPEG Image|*.jpeg|Bitmap Image|*.bmp";
+            saveFileDialog.Title = "Save an Image File";
+            saveFileDialog.ShowDialog();
+
+            if (saveFileDialog.FileName != "")
+            {
+
+                using System.IO.FileStream fs = (System.IO.FileStream)saveFileDialog.OpenFile();
+
+                switch (saveFileDialog.FilterIndex)
+                {
+                    case 1:
+                        pngEncoder.Frames.Add(BitmapFrame.Create(crop));
+                        pngEncoder.Save(fs);
+                        break;
+
+                    case 2:
+                        jpegEncoder.Frames.Add(BitmapFrame.Create(crop));
+                        jpegEncoder.Save(fs);
+                        break;
+
+                    case 3:
+                        bmpEncoder.Frames.Add(BitmapFrame.Create(crop));
+                        bmpEncoder.Save(fs);
+                        break;
+                }
+
+                fs.Close();
+            }
+        }
+
+        private void LoadImageButtonClick(object sender, RoutedEventArgs e)
+        {
+            // open file dialog   
+            OpenFileDialog open = new OpenFileDialog();
+            // image filters  
+            open.Filter = "Image Files(*.jpeg; *.png; *.bmp)|*.jpeg; *.png; *.bmp";
+            open.ShowDialog();
+            if (open.FileName != "")
+            {
+                System.IO.FileStream fs = (System.IO.FileStream)open.OpenFile();
+                string filename = open.FileName;
+                ImageDrawing newImage = new ImageDrawing();
+                newImage.Rect = new Rect(0, 0, canvas.RenderSize.Width, canvas.RenderSize.Height - 100);
+                newImage.ImageSource = new BitmapImage(new Uri(filename));
+
+                var width = newImage.Bounds.Width;
+                var height = newImage.Bounds.Height;
+
+                var previewImageUI = new Image { Source = new DrawingImage(newImage) };
+                var newImageUI = new Image { Source = new DrawingImage(newImage) };
+                previewImageUI.Arrange(new Rect(0, 0, width, height));
+                newImageUI.Arrange(new Rect(0, 0, width, height));
+
+                canvas.Children.Add(previewImageUI);
+                canvas.Children.Add(newImageUI);
+                fs.Close();
+            }
         }
     }
 }
