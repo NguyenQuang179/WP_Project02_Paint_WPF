@@ -10,6 +10,7 @@
   <ItemGroup>
     <None Remove="image\ellipse-icon.png" />
     <None Remove="image\line-icon.png" />
+    <None Remove="image\paintIcon.ico" />
     <None Remove="image\rectangle-icon.png" />
     <None Remove="image\triangle-icon.png" />
   </ItemGroup>
@@ -45,6 +46,7 @@
   <ItemGroup>
     <Resource Include="image\ellipse-icon.png" />
     <Resource Include="image\line-icon.png" />
+    <Resource Include="image\paintIcon.ico" />
     <Resource Include="image\rectangle-icon.png" />
     <Resource Include="image\triangle-icon.png" />
   </ItemGroup>

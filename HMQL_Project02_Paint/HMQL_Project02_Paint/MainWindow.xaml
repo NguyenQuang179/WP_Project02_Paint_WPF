@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:HMQL_Project02_Paint"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
         mc:Ignorable="d" Loaded="Window_Loaded"
-        Title="MainWindow" Height="450" Width="800">
+        Icon="image/paintIcon.ico"
+        Title="HMQL Paint" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100"></RowDefinition>
@@ -17,6 +18,7 @@
                           VerticalScrollBarVisibility="Auto">
                 <StackPanel Orientation="Horizontal" Name="abilitiesStackPanel"
                         Background="Transparent">
+
                     <!--Tools Section-->
                     <Border BorderBrush="DarkGray"
                         BorderThickness="0 0 1 0">
@@ -148,6 +150,7 @@
                                                 Margin="0 2 0 4"/>
                                     <ComboBox   Width="56" SelectionChanged="StrokeSizeSelectionChanged"
                                                 VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Center"
                                                 HorizontalAlignment="Center"
                                                 Name="StrokeSizeCombobox">
                                     </ComboBox>
@@ -156,9 +159,11 @@
                                             Margin="0 0 16 0">
                                     <TextBlock  Text="Brush Pattern:"
                                                 FontSize="12" FontWeight="DemiBold"
+                                                HorizontalAlignment="Center"
                                                 Margin="0 2 0 4"/>
-                                    <ComboBox   Width="56" SelectionChanged="StrokePatternSelectionChanged"
+                                    <ComboBox   MinWidth="100" SelectionChanged="StrokePatternSelectionChanged"
                                                 VerticalAlignment="Center"
+                                                HorizontalContentAlignment="Center"
                                                 HorizontalAlignment="Center"
                                                 Name="StrokePatternCombobox">
                                     </ComboBox>
@@ -171,6 +176,7 @@
                                                 FontSize="12" FontWeight="DemiBold"
                                                 Margin="0 2 0 4"/>
                                     <syncfusion:ColorPicker Name="ColorPicker"
+                                                            MinWidth="150"
                                                             VerticalAlignment="Center"
                                                             HorizontalAlignment="Center"
                                                             SelectedBrushChanged="ColorPicker_SelectedBrushChanged"/>
@@ -187,70 +193,15 @@
                                         FontSize="20"
                                         FontWeight="DemiBold"
                                         Margin="16 8 16 16"/>
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="8 0 0 0">
-                                <Button Click="lineButton_Click" 
-                                        MinWidth="56" Height="32"
-                                        Padding="8 0"
-                                        BorderBrush="DarkGray"
-                                        BorderThickness="1"
-                                        Background="Transparent"
-                                        Margin="0 0 8 0"
-                                        Content="Line">
-                                    <Button.Resources>
-                                        <Style TargetType="{x:Type Border}">
-                                            <Setter Property="CornerRadius" Value="4"/>
-                                        </Style>
-                                    </Button.Resources>
-                                </Button>
-                                <Button Click="rectangleButton_Click" 
-                                        MinWidth="56" Height="32"
-                                        Padding="8 0"
-                                        BorderBrush="DarkGray"
-                                        BorderThickness="1"
-                                        Background="Transparent"
-                                        Margin="0 0 8 0"
-                                        Content="Rectangle">
-                                    <Button.Resources>
-                                        <Style TargetType="{x:Type Border}">
-                                            <Setter Property="CornerRadius" Value="4"/>
-                                        </Style>
-                                    </Button.Resources>
-                                </Button>
-                                <Button Click="ellipseButton_Click" 
-                                        MinWidth="56" Height="32"
-                                        Padding="8 0"
-                                        BorderBrush="DarkGray"
-                                        BorderThickness="1"
-                                        Background="Transparent"
-                                        Margin="0 0 8 0"
-                                        Content="Ellipse">
-                                    <Button.Resources>
-                                        <Style TargetType="{x:Type Border}">
-                                            <Setter Property="CornerRadius" Value="4"/>
-                                        </Style>
-                                    </Button.Resources>
-                                </Button>
-                                <Button Click="triangleButton_Click" 
-                                        MinWidth="56" Height="32"
-                                        Padding="8 0"
-                                        BorderBrush="DarkGray"
-                                        BorderThickness="1"
-                                        Background="Transparent"
-                                        Margin="0 0 8 0"
-                                        Content="Triangle">
-                                    <Button.Resources>
-                                        <Style TargetType="{x:Type Border}">
-                                            <Setter Property="CornerRadius" Value="4"/>
-                                        </Style>
-                                    </Button.Resources>
-                                </Button>
-                            </StackPanel>
+                            <Border>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="8 0 0 0" 
+                                            Name="actionStackPanel"></StackPanel>
+                            </Border>
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </ScrollViewer> 
-            
         </Border>
         <Canvas Grid.Row="1" x:Name="canvas" Background="White"></Canvas>
         <Border Grid.Row="1" Background="Transparent" MouseDown="Border_MouseDown" MouseMove="Border_MouseMove" MouseUp="Border_MouseUp"></Border>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using static HMQL_Project02_Paint.MainWindow;
+using IContract;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -10,7 +11,7 @@ namespace HMQL_Project02_Paint
 {
     static class SerializeInterface
     {
-        public static void SerializeShapes(List<IShape> drawnShapes, string filePath)
+        public static void SerializeShapes(List<IShapeEntity> drawnShapes, string filePath)
         {
             // Create a list of IShape
             var shapes = new ListOfIShape(drawnShapes);
@@ -27,7 +28,7 @@ namespace HMQL_Project02_Paint
             }
         }
 
-        public static List<IShape> DeserializeShapes(string filePath)
+        public static List<IShapeEntity> DeserializeShapes(string filePath)
         {
             // Create the XML serializer
             var xmlSerializer = new XmlSerializer(typeof(ListOfIShape));
@@ -43,11 +44,11 @@ namespace HMQL_Project02_Paint
         }
     }
 
-    public class ListOfIShape : List<IShape>, IXmlSerializable
+    public class ListOfIShape : List<IShapeEntity>, IXmlSerializable
     {
         public ListOfIShape() : base() { }
 
-        public ListOfIShape(List<IShape> shapes) : base(shapes) { }
+        public ListOfIShape(List<IShapeEntity> shapes) : base(shapes) { }
 
         #region IXmlSerializable
         public System.Xml.Schema.XmlSchema GetSchema() { return null; }
@@ -62,7 +63,7 @@ namespace HMQL_Project02_Paint
                 XmlSerializer serial = new XmlSerializer(type);
 
                 reader.ReadStartElement("IShape");
-                this.Add((IShape)serial.Deserialize(reader));
+                this.Add((IShapeEntity)serial.Deserialize(reader));
                 reader.ReadEndElement(); //IShape
             }
             reader.ReadEndElement(); //ListOfIShape
@@ -70,7 +71,7 @@ namespace HMQL_Project02_Paint
 
         public void WriteXml(XmlWriter writer)
         {
-            foreach (IShape shape in this)
+            foreach (IShapeEntity shape in this)
             {
                 writer.WriteStartElement("IShape");
                 writer.WriteAttributeString("AssemblyQualifiedName", shape.GetType().AssemblyQualifiedName);
