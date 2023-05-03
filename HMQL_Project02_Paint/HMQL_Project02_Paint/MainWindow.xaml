@@ -18,32 +18,11 @@
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0"
                     Name="actionStackPanel"
-                    Orientation="Horizontal"
-                    Height="50"
-                    Margin="0 0 16 0"
-                    DockPanel.Dock="Top">
+                    Orientation="Horizontal">
         </StackPanel>
-        <StackPanel Grid.Column="1" Orientation="Horizontal" Name="abilitiesStackPanel">
-            <!--<Button Click="lineButton_Click"
-                    Width="56"
-                    Margin="0 0 16 0"
-                    Content="Line">
-            </Button>
-            <Button Click="rectangleButton_Click"
-                    Width="56"
-                    Margin="0 0 16 0"
-                    Content="Rectangle">
-            </Button>
-            <Button Click="ellipseButton_Click"
-                    Width="56"
-                    Margin="0 0 16 0"
-                    Content="Ellipse">
-            </Button>
-            <Button Click="triangleButton_Click"
-                    Width="56"
-                    Margin="0 0 16 0"
-                    Content="Triangle">
-            </Button>-->
+        <StackPanel Grid.Column="1"
+                    Name="abilitiesStackPanel"
+                    Orientation="Horizontal">
             <Button Click="chooseShapeButton_Click"
                     Width="56"
                     Margin="0 0 16 0"

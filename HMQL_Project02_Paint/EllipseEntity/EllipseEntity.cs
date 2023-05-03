@@ -8,7 +8,7 @@ namespace EllipseEntity
 {
     public class EllipseEntity : IShapeEntity
     {
-        public BitmapImage Icon => new BitmapImage(new Uri("pack://application:,,,/LineEntity;component/ellipse-icon.png", UriKind.Relative));
+        public BitmapImage Icon => new BitmapImage(new Uri("/EllipseEntity;component/ellipse-icon.png", UriKind.Relative));
         public Point TopLeft { get; set; }
         public Point BottomRight { get; set; }
         public string Name => "Ellipse";

@@ -359,123 +359,124 @@ namespace HMQL_Project02_Paint
             }
         }
 
-        //public bool isInShape()
-        //{
-        //    _isFoundItem = false;
-        //    _posOfSelectedItem = -1;
-        //    for (int i = _drawnShapes.Count - 1; i >= 0; i--)
-        //    {
-        //        var item = _drawnShapes[i];
-        //        //var line = _shapePrototypes["Line"];
-        //        //var rectangle = _shapePrototypes["Rectangle"];
-        //        //var ellipse = _shapePrototypes["Ellipse"];
-        //        //var triangle = _shapePrototypes["Triangle"];
+        public bool isInShape()
+        {
+            _isFoundItem = false;
+            _posOfSelectedItem = -1;
+            for (int i = _drawnShapes.Count - 1; i >= 0; i--)
+            {
+                var item = _drawnShapes[i];
+                var item_name = _drawnShapes[i].Name;
+                var line = _shapePrototypes["Line"];
+                var rectangle = _shapePrototypes["Rectangle"];
+                var ellipse = _shapePrototypes["Ellipse"];
+                var triangle = _shapePrototypes["Triangle"];
 
-        //        if (_isFoundItem) break;
+                if (_isFoundItem) break;
 
-        //        switch (item)
-        //        {
-        //            case LineEntity line:
-        //                if (areCollinear(line.Start, line.End, _start))
-        //                {
-        //                    _posOfSelectedItem = i;
-        //                    _isFoundItem = true;
-        //                    _selectedBorder = _line.Clone() as IShapeEntity;
-        //                    _selectedBorder.HandleStart(line.Start);
-        //                    _selectedBorder.HandleEnd(line.End);
-        //                    _selectedBorder.StrokeThickness = 2;
-        //                    _selectedBorder.StrokeColor = Colors.Red;
-        //                    IPaintBusiness painter = _painterPrototypes["Line"];
-        //                    UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
-        //                    canvas.Children.Add(shape);
-        //                }
-        //                else
-        //                {
-        //                }
-        //                break;
+                switch (item_name)
+                {
+                    case "Line":
+                        if (areCollinear(item.TopLeft, item.BottomRight, _start))
+                        {
+                            _posOfSelectedItem = i;
+                            _isFoundItem = true;
+                            _selectedBorder = line.Clone() as IShapeEntity;
+                            _selectedBorder.HandleStart(item.TopLeft);
+                            _selectedBorder.HandleEnd(item.BottomRight);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPaintBusiness painter = _painterPrototypes["Line"];
+                            UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(shape);
+                        }
+                        else
+                        {
+                        }
+                        break;
 
-        //            case RectangleEntity rectangle:
-        //                if (isInRectangle(rectangle.TopLeft, rectangle.BottomRight, _start))
-        //                {
-        //                    _posOfSelectedItem = i;
-        //                    _isFoundItem = true;
-        //                    _selectedBorder = _rectangle.Clone() as IShapeEntity;
-        //                    _selectedBorder.HandleStart(rectangle.TopLeft);
-        //                    _selectedBorder.HandleEnd(rectangle.BottomRight);
-        //                    _selectedBorder.StrokeThickness = 2;
-        //                    _selectedBorder.StrokeColor = Colors.Red;
-        //                    IPaintBusiness painter = _painterPrototypes["Rectangle"];
-        //                    UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
-        //                    canvas.Children.Add(shape);
-        //                }
-        //                else
-        //                {
-        //                }
-        //                break;
+                    case "Rectangle":
+                        if (isInRectangle(item.TopLeft, item.BottomRight, _start))
+                        {
+                            _posOfSelectedItem = i;
+                            _isFoundItem = true;
+                            _selectedBorder = rectangle.Clone() as IShapeEntity;
+                            _selectedBorder.HandleStart(item.TopLeft);
+                            _selectedBorder.HandleEnd(item.BottomRight);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPaintBusiness painter = _painterPrototypes["Rectangle"];
+                            UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(shape);
+                        }
+                        else
+                        {
+                        }
+                        break;
 
-        //            case EllipseEntity ellipse:
-        //                if (isInRectangle(ellipse.TopLeft, ellipse.BottomRight, _start))
-        //                {
-        //                    _posOfSelectedItem = i;
-        //                    _isFoundItem = true;
-        //                    _selectedBorder = _rectangle.Clone() as IShapeEntity;
-        //                    _selectedBorder.HandleStart(ellipse.TopLeft);
-        //                    _selectedBorder.HandleEnd(ellipse.BottomRight);
-        //                    _selectedBorder.StrokeThickness = 2;
-        //                    _selectedBorder.StrokeColor = Colors.Red;
-        //                    IPaintBusiness painter = _painterPrototypes["Rectangle"];
-        //                    UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
-        //                    canvas.Children.Add(shape);
-        //                }
-        //                else
-        //                {
-        //                }
-        //                break;
+                    case "Ellipse":
+                        if (isInRectangle(item.TopLeft, item.BottomRight, _start))
+                        {
+                            _posOfSelectedItem = i;
+                            _isFoundItem = true;
+                            _selectedBorder = rectangle.Clone() as IShapeEntity;
+                            _selectedBorder.HandleStart(item.TopLeft);
+                            _selectedBorder.HandleEnd(item.BottomRight);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPaintBusiness painter = _painterPrototypes["Rectangle"];
+                            UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(shape);
+                        }
+                        else
+                        {
+                        }
+                        break;
 
-        //            case TriangleEntity triangle:
-        //                if (isInRectangle(triangle.TopLeft, triangle.BottomRight, _start))
-        //                {
-        //                    _posOfSelectedItem = i;
-        //                    _isFoundItem = true;
-        //                    _selectedBorder = _rectangle.Clone() as IShapeEntity;
-        //                    _selectedBorder.HandleStart(triangle.TopLeft);
-        //                    _selectedBorder.HandleEnd(triangle.BottomRight);
-        //                    _selectedBorder.StrokeThickness = 2;
-        //                    _selectedBorder.StrokeColor = Colors.Red;
-        //                    IPaintBusiness painter = _painterPrototypes["Rectangle"];
-        //                    UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
-        //                    canvas.Children.Add(shape);
-        //                }
-        //                else
-        //                {
-        //                }
-        //                break;
+                    case "Triangle":
+                        if (isInRectangle(item.TopLeft, item.BottomRight, _start))
+                        {
+                            _posOfSelectedItem = i;
+                            _isFoundItem = true;
+                            _selectedBorder = rectangle.Clone() as IShapeEntity;
+                            _selectedBorder.HandleStart(item.TopLeft);
+                            _selectedBorder.HandleEnd(item.BottomRight);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPaintBusiness painter = _painterPrototypes["Rectangle"];
+                            UIElement shape = painter.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(shape);
+                        }
+                        else
+                        {
+                        }
+                        break;
 
-        //            default:
-        //                // code for other types
-        //                break;
-        //        }
-        //    }
-        //    if (_isFoundItem)
-        //    {
-        //        _drawnShapes.Add(_selectedBorder);
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
+                    default:
+                        // code for other types
+                        break;
+                }
+            }
+            if (_isFoundItem)
+            {
+                _drawnShapes.Add(_selectedBorder);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         private void Border_MouseDown(object sender, MouseEventArgs e)
         {
             if (_selectItemMode && !_isFoundItem)
             {
                 _start = e.GetPosition(canvas);
-                //if (isInShape())
-                //{
-                //    _isFoundItem = true;
-                //}
+                if (isInShape())
+                {
+                    _isFoundItem = true;
+                }
             }
             else if (_selectItemMode && _isFoundItem)
             {
@@ -483,10 +484,10 @@ namespace HMQL_Project02_Paint
 
                 _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
                 canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                //if (isInShape())
-                //{
-                //    _isFoundItem = true;
-                //}
+                if (isInShape())
+                {
+                    _isFoundItem = true;
+                }
             }
             else
             {
@@ -518,139 +519,143 @@ namespace HMQL_Project02_Paint
             {
                 var end = e.GetPosition(canvas);
                 var item = _drawnShapes[_posOfSelectedItem];
+                var line = _shapePrototypes["Line"];
+                var rectangle = _shapePrototypes["Rectangle"];
+                var ellipse = _shapePrototypes["Ellipse"];
+                var triangle = _shapePrototypes["Triangle"];
 
-                //switch (item)
-                //{
-                //    case LineEntity line:
-                //        {
-                //            _drawnShapes.RemoveAt(_posOfSelectedItem);
-                //            canvas.Children.RemoveAt(_posOfSelectedItem);
-                //            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
-                //            canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                //            Point newStart = new Point(line.Start.X - _start.X + end.X, line.Start.Y - _start.Y + end.Y);
-                //            Point newEnd = new Point(line.End.X - _start.X + end.X, line.End.Y - _start.Y + end.Y);
+                switch (item.Name)
+                {
+                    case "Line":
+                        {
+                            _drawnShapes.RemoveAt(_posOfSelectedItem);
+                            canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                            canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                            Point newStart = new Point(item.TopLeft.X - _start.X + end.X, item.TopLeft.Y - _start.Y + end.Y);
+                            Point newEnd = new Point(item.BottomRight.X - _start.X + end.X, item.BottomRight.Y - _start.Y + end.Y);
 
-                //            _preview = _line.Clone() as IShapeEntity;
-                //            _preview.HandleStart(newStart);
-                //            _preview.HandleEnd(newEnd);
-                //            _preview.StrokeThickness = line.StrokeThickness;
-                //            _preview.StrokeColor = line.StrokeColor;
-                //            IPaintBusiness painterLine = _painterPrototypes["Line"];
-                //            UIElement realShape = painterLine.Draw(_preview);
-                //            canvas.Children.Add(realShape);
-                //            _drawnShapes.Add(_preview);
-                //            _posOfSelectedItem = _drawnShapes.Count - 1;
+                            _preview = line.Clone() as IShapeEntity;
+                            _preview.HandleStart(newStart);
+                            _preview.HandleEnd(newEnd);
+                            _preview.StrokeThickness = item.StrokeThickness;
+                            _preview.StrokeColor = item.StrokeColor;
+                            IPaintBusiness painterLine = _painterPrototypes["Line"];
+                            UIElement realShape = painterLine.Draw(_preview);
+                            canvas.Children.Add(realShape);
+                            _drawnShapes.Add(_preview);
+                            _posOfSelectedItem = _drawnShapes.Count - 1;
 
-                //            _selectedBorder = _line.Clone() as IShapeEntity;
-                //            _selectedBorder.HandleStart(newStart);
-                //            _selectedBorder.HandleEnd(newEnd);
-                //            _selectedBorder.StrokeThickness = 2;
-                //            _selectedBorder.StrokeColor = Colors.Red;
-                //            UIElement selectedShape = painterLine.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
-                //            canvas.Children.Add(selectedShape);
-                //            _drawnShapes.Add(_selectedBorder);
+                            _selectedBorder = line.Clone() as IShapeEntity;
+                            _selectedBorder.HandleStart(newStart);
+                            _selectedBorder.HandleEnd(newEnd);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            UIElement selectedShape = painterLine.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(selectedShape);
+                            _drawnShapes.Add(_selectedBorder);
 
-                //            break;
-                //        }
-                //    case RectangleEntity rectangle:
-                //        {
-                //            _drawnShapes.RemoveAt(_posOfSelectedItem);
-                //            canvas.Children.RemoveAt(_posOfSelectedItem);
-                //            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
-                //            canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                //            Point newStart = new Point(rectangle.TopLeft.X - _start.X + end.X, rectangle.TopLeft.Y - _start.Y + end.Y);
-                //            Point newEnd = new Point(rectangle.BottomRight.X - _start.X + end.X, rectangle.BottomRight.Y - _start.Y + end.Y);
+                            break;
+                        }
+                    case "Rectangle":
+                        {
+                            _drawnShapes.RemoveAt(_posOfSelectedItem);
+                            canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                            canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                            Point newStart = new Point(item.TopLeft.X - _start.X + end.X, item.TopLeft.Y - _start.Y + end.Y);
+                            Point newEnd = new Point(item.BottomRight.X - _start.X + end.X, item.BottomRight.Y - _start.Y + end.Y);
 
-                //            _preview = _rectangle.Clone() as IShapeEntity;
-                //            _preview.HandleStart(newStart);
-                //            _preview.HandleEnd(newEnd);
-                //            _preview.StrokeThickness = rectangle.StrokeThickness;
-                //            _preview.StrokeColor = rectangle.StrokeColor;
-                //            IPaintBusiness painterRectangle = _painterPrototypes["Rectangle"];
-                //            UIElement realShape = painterRectangle.Draw(_preview);
-                //            canvas.Children.Add(realShape);
-                //            _drawnShapes.Add(_preview);
-                //            _posOfSelectedItem = _drawnShapes.Count - 1;
+                            _preview = rectangle.Clone() as IShapeEntity;
+                            _preview.HandleStart(newStart);
+                            _preview.HandleEnd(newEnd);
+                            _preview.StrokeThickness = item.StrokeThickness;
+                            _preview.StrokeColor = item.StrokeColor;
+                            IPaintBusiness painterRectangle = _painterPrototypes["Rectangle"];
+                            UIElement realShape = painterRectangle.Draw(_preview);
+                            canvas.Children.Add(realShape);
+                            _drawnShapes.Add(_preview);
+                            _posOfSelectedItem = _drawnShapes.Count - 1;
 
-                //            _selectedBorder = _rectangle.Clone() as IShapeEntity;
-                //            _selectedBorder.HandleStart(newStart);
-                //            _selectedBorder.HandleEnd(newEnd);
-                //            _selectedBorder.StrokeThickness = 2;
-                //            _selectedBorder.StrokeColor = Colors.Red;
-                //            UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
-                //            canvas.Children.Add(selectedShape);
-                //            _drawnShapes.Add(_selectedBorder);
+                            _selectedBorder = rectangle.Clone() as IShapeEntity;
+                            _selectedBorder.HandleStart(newStart);
+                            _selectedBorder.HandleEnd(newEnd);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(selectedShape);
+                            _drawnShapes.Add(_selectedBorder);
 
-                //            break;
-                //        }
-                //    case EllipseEntity ellipse:
-                //        {
-                //            _drawnShapes.RemoveAt(_posOfSelectedItem);
-                //            canvas.Children.RemoveAt(_posOfSelectedItem);
-                //            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
-                //            canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                //            Point newStart = new Point(ellipse.TopLeft.X - _start.X + end.X, ellipse.TopLeft.Y - _start.Y + end.Y);
-                //            Point newEnd = new Point(ellipse.BottomRight.X - _start.X + end.X, ellipse.BottomRight.Y - _start.Y + end.Y);
+                            break;
+                        }
+                    case "Ellipse":
+                        {
+                            _drawnShapes.RemoveAt(_posOfSelectedItem);
+                            canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                            canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                            Point newStart = new Point(item.TopLeft.X - _start.X + end.X, item.TopLeft.Y - _start.Y + end.Y);
+                            Point newEnd = new Point(item.BottomRight.X - _start.X + end.X, item.BottomRight.Y - _start.Y + end.Y);
 
-                //            _preview = _ellipse.Clone() as IShapeEntity;
-                //            _preview.HandleStart(newStart);
-                //            _preview.HandleEnd(newEnd);
-                //            _preview.StrokeThickness = ellipse.StrokeThickness;
-                //            _preview.StrokeColor = ellipse.StrokeColor;
-                //            IPaintBusiness painterEllipse = _painterPrototypes["Ellipse"];
-                //            UIElement realShape = painterEllipse.Draw(_preview);
-                //            canvas.Children.Add(realShape);
-                //            _drawnShapes.Add(_preview);
-                //            _posOfSelectedItem = _drawnShapes.Count - 1;
+                            _preview = ellipse.Clone() as IShapeEntity;
+                            _preview.HandleStart(newStart);
+                            _preview.HandleEnd(newEnd);
+                            _preview.StrokeThickness = item.StrokeThickness;
+                            _preview.StrokeColor = item.StrokeColor;
+                            IPaintBusiness painterEllipse = _painterPrototypes["Ellipse"];
+                            UIElement realShape = painterEllipse.Draw(_preview);
+                            canvas.Children.Add(realShape);
+                            _drawnShapes.Add(_preview);
+                            _posOfSelectedItem = _drawnShapes.Count - 1;
 
-                //            _selectedBorder = _rectangle.Clone() as IShapeEntity;
-                //            _selectedBorder.HandleStart(newStart);
-                //            _selectedBorder.HandleEnd(newEnd);
-                //            _selectedBorder.StrokeThickness = 2;
-                //            _selectedBorder.StrokeColor = Colors.Red;
-                //            IPaintBusiness painterRectangle = _painterPrototypes["Rectangle"];
-                //            UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
-                //            canvas.Children.Add(selectedShape);
-                //            _drawnShapes.Add(_selectedBorder);
+                            _selectedBorder = rectangle.Clone() as IShapeEntity;
+                            _selectedBorder.HandleStart(newStart);
+                            _selectedBorder.HandleEnd(newEnd);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPaintBusiness painterRectangle = _painterPrototypes["Rectangle"];
+                            UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(selectedShape);
+                            _drawnShapes.Add(_selectedBorder);
 
-                //            break;
-                //        }
-                //    case TriangleEntity triangle:
-                //        {
-                //            _drawnShapes.RemoveAt(_posOfSelectedItem);
-                //            canvas.Children.RemoveAt(_posOfSelectedItem);
-                //            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
-                //            canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                //            Point newStart = new Point(triangle.TopLeft.X - _start.X + end.X, triangle.TopLeft.Y - _start.Y + end.Y);
-                //            Point newEnd = new Point(triangle.BottomRight.X - _start.X + end.X, triangle.BottomRight.Y - _start.Y + end.Y);
+                            break;
+                        }
+                    case "Triangle":
+                        {
+                            _drawnShapes.RemoveAt(_posOfSelectedItem);
+                            canvas.Children.RemoveAt(_posOfSelectedItem);
+                            _drawnShapes.RemoveAt(_drawnShapes.Count - 1);
+                            canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                            Point newStart = new Point(item.TopLeft.X - _start.X + end.X, item.TopLeft.Y - _start.Y + end.Y);
+                            Point newEnd = new Point(item.BottomRight.X - _start.X + end.X, item.BottomRight.Y - _start.Y + end.Y);
 
-                //            _preview = _triangle.Clone() as IShapeEntity;
-                //            _preview.HandleStart(newStart);
-                //            _preview.HandleEnd(newEnd);
-                //            _preview.StrokeThickness = triangle.StrokeThickness;
-                //            _preview.StrokeColor = triangle.StrokeColor;
-                //            IPaintBusiness painterTriangle = _painterPrototypes["Triangle"];
-                //            UIElement realShape = painterTriangle.Draw(_preview);
-                //            canvas.Children.Add(realShape);
-                //            _drawnShapes.Add(_preview);
-                //            _posOfSelectedItem = _drawnShapes.Count - 1;
+                            _preview = triangle.Clone() as IShapeEntity;
+                            _preview.HandleStart(newStart);
+                            _preview.HandleEnd(newEnd);
+                            _preview.StrokeThickness = item.StrokeThickness;
+                            _preview.StrokeColor = item.StrokeColor;
+                            IPaintBusiness painterTriangle = _painterPrototypes["Triangle"];
+                            UIElement realShape = painterTriangle.Draw(_preview);
+                            canvas.Children.Add(realShape);
+                            _drawnShapes.Add(_preview);
+                            _posOfSelectedItem = _drawnShapes.Count - 1;
 
-                //            _selectedBorder = _line.Clone() as IShapeEntity;
-                //            _selectedBorder.HandleStart(newStart);
-                //            _selectedBorder.HandleEnd(newEnd);
-                //            _selectedBorder.StrokeThickness = 2;
-                //            _selectedBorder.StrokeColor = Colors.Red;
-                //            IPaintBusiness painterRectangle = _painterPrototypes["Rectangle"];
-                //            UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
-                //            canvas.Children.Add(selectedShape);
-                //            _drawnShapes.Add(_selectedBorder);
+                            _selectedBorder = rectangle.Clone() as IShapeEntity;
+                            _selectedBorder.HandleStart(newStart);
+                            _selectedBorder.HandleEnd(newEnd);
+                            _selectedBorder.StrokeThickness = 2;
+                            _selectedBorder.StrokeColor = Colors.Red;
+                            IPaintBusiness painterRectangle = _painterPrototypes["Rectangle"];
+                            UIElement selectedShape = painterRectangle.Draw(_selectedBorder); // vẽ ra tương ứng với loại entity
+                            canvas.Children.Add(selectedShape);
+                            _drawnShapes.Add(_selectedBorder);
 
-                //            break;
-                //        }
-                //    default:
-                //        // code for other types
-                //        break;
-                //}
+                            break;
+                        }
+                    default:
+                        // code for other types
+                        break;
+                }
             }
             if (!_selectItemMode)
             {
@@ -733,10 +738,26 @@ namespace HMQL_Project02_Paint
             foreach (var (name, entity) in _shapePrototypes)
             {
                 var button = new Button();
-                button.Content = name;
                 button.Tag = entity;
-                //button.icon = entity.Icon;
-                button.Width = 56;
+                //button.Content = name;
+                //button.Content = new Image
+                //{
+                //    Source = new BitmapImage(new Uri("/WpfApplication1;component/image/line-icon.jpg", UriKind.RelativeOrAbsolute)),
+                //    VerticalAlignment = VerticalAlignment.Center,
+                //    HorizontalAlignment = HorizontalAlignment.Center,
+                //};
+
+                button.Content = new Image
+                {
+                    Source = entity.Icon,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Stretch = Stretch.Fill,
+                    Height = 40,
+                    Width = 40
+                };
+
+                button.Height = 40;
+                button.Width = 60;
                 button.Margin = new Thickness(0, 0, 16, 0);
                 button.Click += Button_Click;
 
@@ -778,7 +799,7 @@ namespace HMQL_Project02_Paint
             //_currentType = _line.Name;
             //_preview = (IShapeEntity)_shapePrototypes[_type].Clone();
 
-            //Application.Current.MainWindow.WindowState = WindowState.Maximized;
+            Application.Current.MainWindow.WindowState = WindowState.Maximized;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

@@ -9,6 +9,9 @@ namespace IContract
     {
         public string Name { get; }
 
+        public Point TopLeft { get; set; }
+        public Point BottomRight { get; set; }
+
         BitmapImage Icon { get; }
         public int StrokeThickness { get; set; }
         public Color StrokeColor { get; set; }
