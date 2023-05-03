@@ -643,7 +643,7 @@ namespace HMQL_Project02_Paint
                             _drawnShapes.Add(_preview);
                             _posOfSelectedItem = _drawnShapes.Count - 1;
 
-                            _selectedBorder = _line.Clone() as IShape;
+                            _selectedBorder = _rectangle.Clone() as IShape;
                             _selectedBorder.HandleStart(newStart);
                             _selectedBorder.HandleEnd(newEnd);
                             _selectedBorder.StrokeThickness = 2;
