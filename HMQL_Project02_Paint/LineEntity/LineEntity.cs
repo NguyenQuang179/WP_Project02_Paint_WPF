@@ -2,14 +2,18 @@ using IContract;
 using System;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
-namespace RectangleEntity
+namespace LineEntity
 {
-    public class RectangleEntity : IShapeEntity
+    public class LineEntity : IShapeEntity
     {
-        public Point TopLeft { get; set; }
-        public Point BottomRight { get; set; }
-        public string Name => "Rectangle";
+        public BitmapImage Icon => new BitmapImage(new Uri("pack://application:,,,/LineEntity;component/line-icon.png", UriKind.Relative));
+
+        public Point Start { get; set; }
+        public Point End { get; set; }
+
+        public string Name => "Line";
 
         public int StrokeThickness { get; set; }
         public Color StrokeColor { get; set; }
@@ -17,12 +21,12 @@ namespace RectangleEntity
 
         public void HandleStart(Point point)
         {
-            TopLeft = point;
+            Start = point;
         }
 
         public void HandleEnd(Point point)
         {
-            BottomRight = point;
+            End = point;
         }
 
         public object Clone()

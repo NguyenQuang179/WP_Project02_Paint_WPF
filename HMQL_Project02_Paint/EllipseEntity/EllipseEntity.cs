@@ -3,13 +3,13 @@ using System;
 using System.Windows;
 using System.Windows.Media;
 
-namespace RectangleEntity
+namespace EllipseEntity
 {
-    public class RectangleEntity : IShapeEntity
+    public class EllipseEntity : IShapeEntity
     {
         public Point TopLeft { get; set; }
         public Point BottomRight { get; set; }
-        public string Name => "Rectangle";
+        public string Name => "Ellipse";
 
         public int StrokeThickness { get; set; }
         public Color StrokeColor { get; set; }

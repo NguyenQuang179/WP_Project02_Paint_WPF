@@ -1,0 +1,28 @@
+﻿<Window x:Class="PaintDLL.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PaintDLL"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
+    <DockPanel LastChildFill="True">
+        <StackPanel Name="actionStackPanel" Orientation="Horizontal" Height="50" DockPanel.Dock="Top">
+        </StackPanel>
+        <Grid>
+            <Canvas
+            Name="canvas"
+            Background="White"
+            Focusable="False">
+            </Canvas>
+
+            <Border
+            Name ="border"
+            Background="Transparent"
+            MouseDown="Border_MouseDown"
+            MouseMove="Border_MouseMove"
+            MouseUp="Border_MouseUp">
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>
