@@ -796,7 +796,6 @@ namespace HMQL_Project02_Paint
             canvas.Children.RemoveAt(_posOfSelectedItem);
         }
 
-
         private void save_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -845,7 +844,7 @@ namespace HMQL_Project02_Paint
             RenderTargetBitmap rtb = new RenderTargetBitmap((int)canvas.RenderSize.Width,
                                         (int)canvas.RenderSize.Height, 96d, 96d, System.Windows.Media.PixelFormats.Default);
             rtb.Render(canvas);
-            var crop = new CroppedBitmap(rtb, new Int32Rect(0, 40, rtb.PixelWidth, rtb.PixelHeight - 40));
+            var crop = new CroppedBitmap(rtb, new Int32Rect(0, 100, rtb.PixelWidth, rtb.PixelHeight - 100));
             BitmapEncoder pngEncoder = new PngBitmapEncoder();
             BitmapEncoder jpegEncoder = new JpegBitmapEncoder();
             BitmapEncoder bmpEncoder = new BmpBitmapEncoder();
@@ -893,7 +892,7 @@ namespace HMQL_Project02_Paint
                 System.IO.FileStream fs = (System.IO.FileStream)open.OpenFile();
                 string filename = open.FileName;
                 ImageDrawing newImage = new ImageDrawing();
-                newImage.Rect = new Rect(0, 0, canvas.RenderSize.Width, canvas.RenderSize.Height - 40);
+                newImage.Rect = new Rect(0, 0, canvas.RenderSize.Width, canvas.RenderSize.Height - 100);
                 newImage.ImageSource = new BitmapImage(new Uri(filename));
 
                 var width = newImage.Bounds.Width;
